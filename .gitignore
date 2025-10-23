@@ -1,0 +1,17 @@
+# Ignore build and IDE files
+/target/
+/.idea/
+/.vscode/
+*.iml
+
+# Ignore logs
+*.log
+
+# Ignore Docker/MongoDB generated data
+docker/mongo-data/
+docker/postgres-data/
+docker/mysql-data/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
