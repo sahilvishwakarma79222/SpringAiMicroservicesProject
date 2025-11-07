@@ -2,6 +2,7 @@ package com.substring.quiz.controller;
 
 import com.substring.quiz.dto.QuizDto;
 import com.substring.quiz.service.QuizService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class QuizController {
 
 private final QuizService quizService;
 
-public QuizController(QuizService quizService){
+public QuizController(@Qualifier("resttemplate") QuizService quizService){
     this.quizService=quizService;
 }
 
