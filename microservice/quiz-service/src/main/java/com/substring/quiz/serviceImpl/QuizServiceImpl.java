@@ -87,4 +87,5 @@ public class QuizServiceImpl implements QuizService {
         List<QuizDto> list = all.stream().map(m -> modelMapper.map(m, QuizDto.class)).toList();
         return list;
     }
+
 }
