@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/project")
@@ -41,7 +42,17 @@ public ResponseEntity<Project> saveProject(@RequestBody Project project){
         String msg = service.updateProject(id, project);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
-
+    @GetMapping("/smart")
+    public ResponseEntity<Map<String, Object>> getProjectsSmart(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search
+    ) {
+        Map<String, Object> response = service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
+        return ResponseEntity.ok(response);
+    }
 
 
 }
