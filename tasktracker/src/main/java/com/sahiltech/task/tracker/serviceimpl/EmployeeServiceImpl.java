@@ -5,6 +5,7 @@ import com.sahiltech.task.tracker.repository.EmployeeRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmployeeServiceImpl {
@@ -15,6 +16,10 @@ public EmployeeServiceImpl(EmployeeRepo employeeRepo){
     this.employeeRepo=employeeRepo;
 }
 
+public int countEmployee(){
+    int employeeCount = employeeRepo.countAllEmployee();
+    return employeeCount;
+}
 public Employee saveEmployee(Employee employee){
     Employee save = employeeRepo.save(employee);
     return save;
@@ -34,5 +39,14 @@ public List<Employee> getAllEmployee(){
     return employeeRepo.getAll();
 }
 
+    public Map<String, Object> getSmartPaginatedProjects(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir,
+            String search
+    ) {
+        return employeeRepo.getProjectsSmartPagination(page, size, sortBy, sortDir, search);
+    }
 
 }

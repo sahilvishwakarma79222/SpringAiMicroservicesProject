@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     status VARCHAR(50),
     project_id INT,
     employee_id INT,
+    assigned_date DATE,
+    completed_date DATE,
     FOREIGN KEY (project_id) REFERENCES projects(id),
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );

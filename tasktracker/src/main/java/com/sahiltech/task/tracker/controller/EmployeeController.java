@@ -8,7 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1/employee")
 public class EmployeeController {
@@ -20,10 +22,17 @@ public class EmployeeController {
         this.service=service;
     }
 
+
+
     @PostMapping("/save")
     public ResponseEntity<Employee> saveEmployee(@RequestBody Employee employee){
         Employee employee1 = service.saveEmployee(employee);
         return new ResponseEntity<>(employee, HttpStatus.OK);
+    }
+    @GetMapping("/getEmployeeCount")
+    public ResponseEntity<Integer> saveEmployeeCount(){
+        int count = service.countEmployee();
+        return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
     @GetMapping("/getEmployee/{id}")
@@ -42,5 +51,17 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployee(){
         List<Employee> allEmployee = service.getAllEmployee();
         return new ResponseEntity<>(allEmployee,HttpStatus.OK);
+    }
+
+    @GetMapping("/smart")
+    public ResponseEntity<Map<String, Object>> getProjectsSmart(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search
+    ) {
+        Map<String, Object> response = service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
+        return ResponseEntity.ok(response);
     }
 }

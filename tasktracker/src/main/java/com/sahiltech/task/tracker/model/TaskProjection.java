@@ -9,16 +9,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Task {
+public class TaskProjection {
+
     private long id;
     private String title;
-    private String description;
     private String status;
-    private Long projectId;
-    private Long employeeId;
+    private String name;
+    private String projectname;
 
     private LocalDate assignedDate;
     private LocalDate completedDate;
-
-
 }

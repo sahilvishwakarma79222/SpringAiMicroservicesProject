@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/project")
 public class ProjectController {
@@ -25,6 +26,11 @@ public ResponseEntity<Project> saveProject(@RequestBody Project project){
     return new ResponseEntity<>(project1, HttpStatus.OK);
 }
 
+    @GetMapping("/getProjectsCount")
+    public ResponseEntity<Integer> saveEmployeeCount(){
+        int count = service.countProject();
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<Project> getProjectById(@PathVariable Long id){

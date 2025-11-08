@@ -25,7 +25,12 @@ public ProjectRepo(JdbcTemplate jdbcTemplate){
     private String sqlUpdateById="update projects set name=?,description=? where id=?";
     private String sqlGetAll = "SELECT * FROM projects";
     private String sqlGetAllPaginated = "SELECT * FROM projects LIMIT ? OFFSET ?";
+    private String sqlGetAllCount = "SELECT count(*) FROM projects";
 
+    public int countAllProjects(){
+        int allProjectsCount = jdbcTemplate.queryForObject(sqlGetAllCount, Integer.class);
+        return allProjectsCount;
+    }
     public Project saveProject(Project project){
         KeyHolder keyHolder=new GeneratedKeyHolder();
 
@@ -132,7 +137,7 @@ public ProjectRepo(JdbcTemplate jdbcTemplate){
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         Map<String, Object> result = new LinkedHashMap<>();
-        result.put("projects", projects);
+        result.put("results", projects);
         result.put("totalRecords", totalRecords);
         result.put("totalPages", totalPages);
         result.put("currentPage", pageNumber);

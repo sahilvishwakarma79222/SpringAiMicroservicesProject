@@ -16,7 +16,10 @@ public class ProjectServiceImpl {
         this.projectRepo=projectRepo;
     }
 
-
+    public int countProject(){
+        int projectCount = projectRepo.countAllProjects();
+        return projectCount;
+    }
     public Project saveProject(Project project){
         return projectRepo.saveProject(project);
     }

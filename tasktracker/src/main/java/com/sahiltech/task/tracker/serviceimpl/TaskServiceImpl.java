@@ -5,6 +5,7 @@ import com.sahiltech.task.tracker.repository.TaskRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskServiceImpl {
@@ -43,6 +44,14 @@ public class TaskServiceImpl {
         return taskRepo.deleteTask(id);
     }
 
-
+    public Map<String, Object> getSmartPaginatedProjects(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir,
+            String search
+    ) {
+        return taskRepo.getProjectsSmartPagination(page, size, sortBy, sortDir, search);
+    }
 
 }
