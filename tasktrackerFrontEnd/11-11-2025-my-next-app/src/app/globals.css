@@ -1,0 +1,37 @@
+/* globals.css */
+.sidebar-expanded {
+  width: 240px !important;
+}
+
+.sidebar-collapsed {
+  width: 60px !important;
+}
+
+/* Ensure proper z-index stacking */
+.navbar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.sidebar-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1020;
+  height: 100vh;
+}
+
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.hover-bg-light:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
