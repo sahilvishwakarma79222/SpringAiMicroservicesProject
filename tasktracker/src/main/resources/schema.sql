@@ -50,15 +50,15 @@ CREATE TABLE IF NOT EXISTS newmodule (
     FOREIGN KEY (project_id) REFERENCES projects(id)
 );
 
---CREATE TABLE IF NOT EXISTS newtasks (
---    id INT AUTO_INCREMENT PRIMARY KEY,
---    title VARCHAR(100),
---    description TEXT,
---    status VARCHAR(50),
---    project_id INT,
---    employee_id INT,
---    assigned_date DATE,
---    completed_date DATE,
---    FOREIGN KEY (project_id) REFERENCES projects(id),
---    FOREIGN KEY (employee_id) REFERENCES employees(id)
---);
+CREATE TABLE IF NOT EXISTS newtasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100),
+    description TEXT,
+    status VARCHAR(50),
+    project_id INT,
+    employee_id INT,
+    assigned_date DATE,
+    completed_date DATE,
+    FOREIGN KEY (project_id) REFERENCES projects(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
