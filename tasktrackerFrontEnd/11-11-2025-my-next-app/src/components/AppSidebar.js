@@ -21,11 +21,13 @@ export default function AppSidebar({ isCollapsed }) {
     { path: "/", label: "Dashboard", icon: FaTachometerAlt },
     { path: "/employees", label: "Employees", icon: FaUsers },
     { path: "/projects", label: "Projects", icon: FaProjectDiagram },
+    { path: "/new-module", label: "Module", icon: FaProjectDiagram },
     { path: "/tasks", label: "Tasks", icon: FaTasks },
     { path: "/errors", label: "Errors", icon: FaTasks },
-    { path: "/calendar", label: "Calendar", icon: FaCalendarAlt },
-    { path: "/reports", label: "Reports", icon: FaChartBar },
-    { path: "/settings", label: "Settings", icon: FaCog },
+    { path: "/employee-task", label: "Employye-Task", icon: FaTasks },
+    // { path: "/calendar", label: "Calendar", icon: FaCalendarAlt },
+    // { path: "/reports", label: "Reports", icon: FaChartBar },
+    // { path: "/settings", label: "Settings", icon: FaCog },
   ];
 
   const isActive = (path) => pathname === path;
@@ -48,8 +50,8 @@ export default function AppSidebar({ isCollapsed }) {
               key={item.path}
               href={item.path}
               className={`d-flex align-items-center rounded mb-1 text-decoration-none ${isActive(item.path)
-                  ? "bg-primary text-white"
-                  : "text-light hover-bg-light"
+                ? "bg-primary text-white"
+                : "text-light hover-bg-light"
                 } ${isCollapsed ? 'justify-content-center py-2 px-2' : 'justify-content-start py-2 px-3'}`}
               onClick={(e) => {
                 e.preventDefault();
