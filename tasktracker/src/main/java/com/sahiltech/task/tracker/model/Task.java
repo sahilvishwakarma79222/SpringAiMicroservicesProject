@@ -14,11 +14,12 @@ public class Task {
     private String title;
     private String description;
     private String status;
-    private Long projectId;
-    private Long employeeId;
-
+    private String priority;
+    private long projectId;
+    private Long moduleId;
+    private long employeeId;
+    private Long errorId;       // ✅ Link to Errors (can be null)
     private LocalDate assignedDate;
     private LocalDate completedDate;
-
 
 }

@@ -14,71 +14,84 @@ import java.util.*;
 @Repository
 public class ProjectRepo {
 
-private final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-public ProjectRepo(JdbcTemplate jdbcTemplate){
-    this.jdbcTemplate=jdbcTemplate;
-}
-    private String sqlCreate="insert into projects(name,description) values(?,?)";
-    private String sqlGetById="select * from projects where projects.id=?";
-    private String sqlDeleteById="delete from projects where projects.id=?";
-    private String sqlUpdateById="update projects set name=?,description=? where id=?";
-    private String sqlGetAll = "SELECT * FROM projects";
-    private String sqlGetAllPaginated = "SELECT * FROM projects LIMIT ? OFFSET ?";
-    private String sqlGetAllCount = "SELECT count(*) FROM projects";
-
-    public int countAllProjects(){
-        int allProjectsCount = jdbcTemplate.queryForObject(sqlGetAllCount, Integer.class);
-        return allProjectsCount;
+    public ProjectRepo(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
-    public Project saveProject(Project project){
-        KeyHolder keyHolder=new GeneratedKeyHolder();
 
-        jdbcTemplate.update(connection->{
-            PreparedStatement ps = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
+    // ✅ SQL Statements
+    private static final String SQL_INSERT =
+            "INSERT INTO projects(name, description, status) VALUES (?, ?, ?)";
+    private static final String SQL_FIND_BY_ID =
+            "SELECT * FROM projects WHERE id = ?";
+    private static final String SQL_DELETE_BY_ID =
+            "DELETE FROM projects WHERE id = ?";
+    private static final String SQL_UPDATE_BY_ID =
+            "UPDATE projects SET name = ?, description = ?, status = ? WHERE id = ?";
+    private static final String SQL_FIND_ALL =
+            "SELECT * FROM projects";
+    private static final String SQL_FIND_ALL_PAGINATED =
+            "SELECT * FROM projects LIMIT ? OFFSET ?";
+    private static final String SQL_COUNT_ALL =
+            "SELECT COUNT(*) FROM projects";
+
+    // ✅ Count all
+    public int countAllProjects() {
+        return jdbcTemplate.queryForObject(SQL_COUNT_ALL, Integer.class);
+    }
+
+    // ✅ Create
+    public Project saveProject(Project project) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
+            ps.setString(3, project.getStatus()); // ✅ include status/planning
             return ps;
-    },keyHolder);
-        if(keyHolder!=null){
+        }, keyHolder);
+
+        if (keyHolder.getKey() != null) {
             project.setId(keyHolder.getKey().longValue());
         }
         return project;
     }
 
-
-
-    public Project getById(Long id){
-        Project project = jdbcTemplate.queryForObject(sqlGetById, new ProjectRowMapper(), id);
-        return project;
+    // ✅ Read
+    public Project getById(Long id) {
+        return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, new ProjectRowMapper(), id);
     }
 
-    public String deleteProject(long id){
-        jdbcTemplate.update(sqlDeleteById,id);
-        return "project deleted succesfully with id "+id;
+    // ✅ Delete
+    public String deleteProject(long id) {
+        jdbcTemplate.update(SQL_DELETE_BY_ID, id);
+        return "Project deleted successfully with id " + id;
     }
 
-    public String updateProject(long id,Project project){
-        jdbcTemplate.update(sqlUpdateById,
+    // ✅ Update
+    public String updateProject(long id, Project project) {
+        jdbcTemplate.update(SQL_UPDATE_BY_ID,
                 project.getName(),
                 project.getDescription(),
+                project.getStatus(), // ✅ fix: you missed this earlier
                 id
-                );
-        return "Project deleted succesfully with id "+id;
+        );
+        return "Project updated successfully with id " + id;
     }
 
-    public List<Project> getAllProjects(){
-        List<Project> projects = jdbcTemplate.query(sqlGetAll, new ProjectRowMapper());
-        return projects;
+    // ✅ Get all
+    public List<Project> getAllProjects() {
+        return jdbcTemplate.query(SQL_FIND_ALL, new ProjectRowMapper());
     }
 
+    // ✅ Simple Pagination
     public Map<String, Object> getProjectsPage(int pageNumber, int pageSize) {
         int offset = (pageNumber - 1) * pageSize;
 
-
-        List<Project> projects = jdbcTemplate.query(sqlGetAllPaginated, new ProjectRowMapper(), pageSize, offset);
-
-        int total = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM projects", Integer.class);
+        List<Project> projects = jdbcTemplate.query(SQL_FIND_ALL_PAGINATED, new ProjectRowMapper(), pageSize, offset);
+        int total = jdbcTemplate.queryForObject(SQL_COUNT_ALL, Integer.class);
         int totalPages = (int) Math.ceil((double) total / pageSize);
 
         Map<String, Object> response = new HashMap<>();
@@ -90,6 +103,7 @@ public ProjectRepo(JdbcTemplate jdbcTemplate){
         return response;
     }
 
+    // ✅ Smart Pagination (Search + Sort)
     public Map<String, Object> getProjectsSmartPagination(
             int pageNumber,
             int pageSize,
@@ -109,13 +123,17 @@ public ProjectRepo(JdbcTemplate jdbcTemplate){
 
         // ✅ Search condition
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            sql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ?");
+            sql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ?");
             params.add("%" + searchTerm.toLowerCase() + "%");
             params.add("%" + searchTerm.toLowerCase() + "%");
+            params.add("%" + searchTerm.toLowerCase() + "%");
+            params.add("%" + searchTerm.toLowerCase() + "%");
+
         }
 
         // ✅ Sorting
-        sql.append(" ORDER BY ").append(sortBy).append(" ").append(sortDir.equalsIgnoreCase("desc") ? "DESC" : "ASC");
+        sql.append(" ORDER BY ").append(sortBy).append(" ")
+                .append(sortDir.equalsIgnoreCase("desc") ? "DESC" : "ASC");
 
         // ✅ Pagination
         sql.append(" LIMIT ? OFFSET ?");
@@ -124,13 +142,16 @@ public ProjectRepo(JdbcTemplate jdbcTemplate){
 
         List<Project> projects = jdbcTemplate.query(sql.toString(), new ProjectRowMapper(), params.toArray());
 
-        // ✅ Count total records for page calculation
+        // ✅ Count total for pagination
         StringBuilder countSql = new StringBuilder("SELECT COUNT(*) FROM projects");
         List<Object> countParams = new ArrayList<>();
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            countSql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ?");
+            countSql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ?");
             countParams.add("%" + searchTerm.toLowerCase() + "%");
             countParams.add("%" + searchTerm.toLowerCase() + "%");
+            countParams.add("%" + searchTerm.toLowerCase() + "%");
+            countParams.add("%" + searchTerm.toLowerCase() + "%");
+
         }
 
         int totalRecords = jdbcTemplate.queryForObject(countSql.toString(), Integer.class, countParams.toArray());
@@ -148,6 +169,4 @@ public ProjectRepo(JdbcTemplate jdbcTemplate){
 
         return result;
     }
-
-
 }

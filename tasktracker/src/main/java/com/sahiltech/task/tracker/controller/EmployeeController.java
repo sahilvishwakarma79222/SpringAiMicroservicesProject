@@ -41,7 +41,7 @@ public class EmployeeController {
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
-    @PutMapping("/updateEmployee/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> saveEmployee(@PathVariable long id,@RequestBody Employee employee){
         String msg = service.updateEmployee(id, employee);
         return new ResponseEntity<>(msg, HttpStatus.OK);

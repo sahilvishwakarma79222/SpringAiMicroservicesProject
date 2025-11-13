@@ -33,12 +33,12 @@ public ResponseEntity<Task> saveTask(@RequestBody Task task){
     }
 
     @GetMapping("/getByEmployeeId/{id}")
-    public ResponseEntity<Task> getByEmpId(@PathVariable Long id){
+    public ResponseEntity<List<Task>> getByEmpId(@PathVariable Long id){
         return new ResponseEntity<>(service.getByIdEmployeeId(id),HttpStatus.OK);
     }
 
     @GetMapping("/getByProjectId/{id}")
-    public ResponseEntity<Task> getByProjectId(@PathVariable Long id){
+    public ResponseEntity<List<Task>> getByProjectId(@PathVariable Long id){
         return new ResponseEntity<>(service.getByIdProjectId(id),HttpStatus.OK);
     }
 
@@ -67,6 +67,32 @@ public ResponseEntity<String> deleteTaskById(@PathVariable long id){
             @RequestParam(required = false) String search
     ) {
         Map<String, Object> response = service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/employee/{employeeId}/smart")
+    public ResponseEntity<Map<String, Object>> getTasksByEmployeeSmart(
+            @PathVariable Long employeeId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "t.id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search
+    ) {
+        Map<String, Object> response = service.getByEmployeeIdSmart(employeeId, page, size, sortBy, sortDir, search);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/project/{projectId}/smart")
+    public ResponseEntity<Map<String, Object>> getTasksByProjectSmart(
+            @PathVariable Long projectId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "t.id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search
+    ) {
+        Map<String, Object> response = service.getByProjectIdSmart(projectId, page, size, sortBy, sortDir, search);
         return ResponseEntity.ok(response);
     }
 

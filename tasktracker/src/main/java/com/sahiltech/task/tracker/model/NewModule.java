@@ -12,11 +12,12 @@ import java.time.LocalDate;
 public class NewModule {
 
     private long id;
-    private String modulename;
+    private String name;               // ✅ renamed
     private String description;
     private String status;
     private String priority;
     private String clientName;
-    private long project_id;
-    private LocalDate moduledate;
+    private long projectId;            // ✅ camelCase (project_id → projectId)
+    private LocalDate startDate;       // ✅ new field
+    private LocalDate completedDate;   // ✅ new field
 }
