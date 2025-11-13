@@ -12,17 +12,16 @@ public class NewModuleRowMapper implements RowMapper<NewModule> {
 
     @Override
     public NewModule mapRow(ResultSet rs, int rowNum) throws SQLException {
-        NewModule module=new NewModule();
+        NewModule module = new NewModule();
         module.setId(rs.getLong("id"));
+        module.setName(rs.getString("name"));
         module.setDescription(rs.getString("description"));
-        module.setPriority(rs.getString("priority"));
-        module.setModulename(rs.getString("modulename"));
         module.setStatus(rs.getString("status"));
-        module.setClientName(rs.getString("clientname"));
-        module.setProject_id(rs.getLong("project_id"));
-        module.setModuledate(
-                rs.getDate("moduledate") != null ? rs.getDate("moduledate").toLocalDate() : null
-        );
+        module.setPriority(rs.getString("priority"));
+        module.setClientName(rs.getString("client_name"));
+        module.setProjectId(rs.getLong("project_id"));
+        module.setStartDate(rs.getDate("start_date") != null ? rs.getDate("start_date").toLocalDate() : null);
+        module.setCompletedDate(rs.getDate("completed_date") != null ? rs.getDate("completed_date").toLocalDate() : null);
         return module;
     }
 }
