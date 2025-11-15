@@ -72,11 +72,11 @@ export default function TasksPage() {
   // Page size options
   const pageSizeOptions = [5, 10, 20, 50];
 
-  // Status colors
+  // Status colors - waise color show karne ke liye
   const statusColors = {
     "Completed": "success",
     "In Progress": "warning",
-    "Assigned": "info",
+    "Assigned": "primary",
     "Pending": "secondary",
     "Cancelled": "danger"
   };
@@ -574,7 +574,16 @@ export default function TasksPage() {
                         <small className="text-muted" style={{ fontSize: '0.7rem' }}>Task</small>
                       </td>
                       <td className="py-2">
-                        <Badge className={statusColors[t.status] || "info"} style={{ fontSize: '0.7rem' }}>
+                        <Badge 
+                          bg={statusColors[t.status] || "info"} 
+                          style={{ 
+                            fontSize: '0.7rem',
+                            backgroundColor: statusColors[t.status] ? undefined : '#17a2b8',
+                            color: 'white',
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '0.375rem'
+                          }}
+                        >
                           {t.status}
                         </Badge>
                       </td>
@@ -785,7 +794,7 @@ export default function TasksPage() {
                     <option value="">Select Project</option>
                     {projects.map(project => (
                       <option key={project.id} value={project.id}>
-                        {project.name} (ID: {project.id})
+                        {project.name} 
                       </option>
                     ))}
                   </Form.Select>
@@ -826,7 +835,7 @@ export default function TasksPage() {
                     <option value="">Select Employee</option>
                     {employees.map(employee => (
                       <option key={employee.id} value={employee.id}>
-                        {employee.name} (ID: {employee.id})
+                        {employee.name} 
                       </option>
                     ))}
                   </Form.Select>
@@ -839,7 +848,7 @@ export default function TasksPage() {
                     value={formData.assignedDate}
                     onChange={(e) => setFormData({ ...formData, assignedDate: e.target.value })}
                     style={{ fontSize: '0.85rem' }}
-                  />
+                />
                 </Form.Group>
               </div>
 
@@ -879,7 +888,16 @@ export default function TasksPage() {
           ) : selectedTask ? (
             <div>
               <div className="mb-3">
-                <Badge className={statusColors[selectedTask.status] || "info"} style={{ fontSize: '0.8rem' }}>
+                <Badge 
+                  bg={statusColors[selectedTask.status] || "info"} 
+                  style={{ 
+                    fontSize: '0.8rem',
+                    backgroundColor: statusColors[selectedTask.status] ? undefined : '#17a2b8',
+                    color: 'white',
+                    padding: '0.35rem 0.65rem',
+                    borderRadius: '0.375rem'
+                  }}
+                >
                   {selectedTask.status}
                 </Badge>
               </div>
@@ -938,7 +956,16 @@ export default function TasksPage() {
             <div className="text-center">
               <div className="mb-3">
                 <h6 className="mb-1" style={{ fontSize: '0.9rem' }}>{selectedTask.title}</h6>
-                <Badge className={statusColors[selectedTask.status] || "info"} style={{ fontSize: '0.7rem' }}>
+                <Badge 
+                  bg={statusColors[selectedTask.status] || "info"} 
+                  style={{ 
+                    fontSize: '0.7rem',
+                    backgroundColor: statusColors[selectedTask.status] ? undefined : '#17a2b8',
+                    color: 'white',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '0.375rem'
+                  }}
+                >
                   {selectedTask.status}
                 </Badge>
               </div>

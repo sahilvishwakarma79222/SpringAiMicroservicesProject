@@ -6,10 +6,9 @@ import {
   FaUsers,
   FaProjectDiagram,
   FaTasks,
-  FaCalendarAlt,
-  FaChartBar,
-  FaCog,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaCube,
+  FaExclamationTriangle
 } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -21,16 +20,29 @@ export default function AppSidebar({ isCollapsed }) {
     { path: "/", label: "Dashboard", icon: FaTachometerAlt },
     { path: "/employees", label: "Employees", icon: FaUsers },
     { path: "/projects", label: "Projects", icon: FaProjectDiagram },
-    { path: "/new-module", label: "Module", icon: FaProjectDiagram },
+    { path: "/new-module", label: "Module", icon: FaCube },
     { path: "/tasks", label: "Tasks", icon: FaTasks },
-    { path: "/errors", label: "Errors", icon: FaTasks },
-    { path: "/employee-task", label: "Employye-Task", icon: FaTasks },
-    // { path: "/calendar", label: "Calendar", icon: FaCalendarAlt },
-    // { path: "/reports", label: "Reports", icon: FaChartBar },
-    // { path: "/settings", label: "Settings", icon: FaCog },
+    { path: "/errors", label: "Errors", icon: FaExclamationTriangle },
+    { path: "/employee-task", label: "Employee Tasks", icon: FaUsers },
+    { path: "/project-task", label: "Project Tasks", icon: FaProjectDiagram },
   ];
 
   const isActive = (path) => pathname === path;
+
+  // Get appropriate icon based on label
+  const getIcon = (label, defaultIcon) => {
+    const iconMap = {
+      "Dashboard": FaTachometerAlt,
+      "Employees": FaUsers,
+      "Projects": FaProjectDiagram,
+      "Module": FaCube,
+      "Tasks": FaTasks,
+      "Errors": FaExclamationTriangle,
+      "Employee Tasks": FaUsers,
+      "Project Tasks": FaProjectDiagram,
+    };
+    return iconMap[label] || defaultIcon;
+  };
 
   return (
     <div
@@ -45,27 +57,30 @@ export default function AppSidebar({ isCollapsed }) {
       {/* Navigation Menu Only - No Header */}
       <div className="flex-grow-1 overflow-auto py-3">
         <Nav className="flex-column px-2">
-          {menuItems.map((item) => (
-            <Nav.Link
-              key={item.path}
-              href={item.path}
-              className={`d-flex align-items-center rounded mb-1 text-decoration-none ${isActive(item.path)
-                ? "bg-primary text-white"
-                : "text-light hover-bg-light"
-                } ${isCollapsed ? 'justify-content-center py-2 px-2' : 'justify-content-start py-2 px-3'}`}
-              onClick={(e) => {
-                e.preventDefault();
-                router.push(item.path);
-              }}
-              title={isCollapsed ? item.label : ''}
-              style={{ fontSize: '0.85rem' }}
-            >
-              <item.icon size={16} className={isCollapsed ? '' : 'me-3'} />
-              {!isCollapsed && (
-                <span className="fw-medium">{item.label}</span>
-              )}
-            </Nav.Link>
-          ))}
+          {menuItems.map((item) => {
+            const IconComponent = getIcon(item.label, item.icon);
+            return (
+              <Nav.Link
+                key={item.path}
+                href={item.path}
+                className={`d-flex align-items-center rounded mb-1 text-decoration-none ${isActive(item.path)
+                  ? "bg-primary text-white"
+                  : "text-light hover-bg-light"
+                  } ${isCollapsed ? 'justify-content-center py-2 px-2' : 'justify-content-start py-2 px-3'}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(item.path);
+                }}
+                title={isCollapsed ? item.label : ''}
+                style={{ fontSize: '0.85rem' }}
+              >
+                <IconComponent size={16} className={isCollapsed ? '' : 'me-3'} />
+                {!isCollapsed && (
+                  <span className="fw-medium">{item.label}</span>
+                )}
+              </Nav.Link>
+            );
+          })}
         </Nav>
       </div>
 
@@ -77,11 +92,11 @@ export default function AppSidebar({ isCollapsed }) {
             <Card.Body className="p-2">
               <div className="d-flex justify-content-between align-items-center text-white">
                 <div>
-                  <small className="text-light" style={{ fontSize: '0.75rem' }}>Today's Tasks</small>
-                  <h6 className="mb-0 fw-bold" style={{ fontSize: '0.9rem' }}>12/24</h6>
+                  <small className="text-light" style={{ fontSize: '0.75rem' }}>Today's Progress</small>
+                  <h6 className="mb-0 fw-bold" style={{ fontSize: '0.9rem' }}>65% Complete</h6>
                 </div>
-                <div className="bg-warning rounded p-1">
-                  <FaTasks className="text-dark" size={12} />
+                <div className="bg-success rounded p-1">
+                  <FaTachometerAlt className="text-white" size={12} />
                 </div>
               </div>
             </Card.Body>
