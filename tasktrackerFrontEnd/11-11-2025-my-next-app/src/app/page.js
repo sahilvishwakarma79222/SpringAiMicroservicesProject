@@ -34,8 +34,17 @@ export default function HomePage() {
       ]);
 
       const tasks = tasksRes.data?.results || tasksRes.data || [];
-      const completedTasks = tasks.filter(task => task.status === 'COMPLETED').length;
-      const pendingTasks = tasks.filter(task => task.status === 'PENDING' || task.status === 'IN_PROGRESS' || task.status === 'ongoing').length;
+      
+      // Normalize status values for consistent comparison
+      const completedTasks = tasks.filter(task => {
+        const status = task.status?.toUpperCase();
+        return status === 'COMPLETED' || status === 'DONE';
+      }).length;
+      
+      const pendingTasks = tasks.filter(task => {
+        const status = task.status?.toUpperCase();
+        return status === 'PENDING' || status === 'IN_PROGRESS' || status === 'ONGOING' || status === 'IN PROGRESS';
+      }).length;
 
       setCounts({
         employees: empRes.data || 0,
@@ -45,6 +54,7 @@ export default function HomePage() {
         pendingTasks
       });
 
+      // Set recent tasks with proper field mapping
       setRecentTasks(tasks.slice(0, 5));
     } catch (error) {
       console.error("Error fetching counts:", error);
@@ -62,12 +72,19 @@ export default function HomePage() {
   };
 
   const getStatusVariant = (status) => {
-    switch (status?.toUpperCase()) {
-      case 'COMPLETED': return 'success';
-      case 'IN_PROGRESS': return 'warning';
-      case 'ONGOING': return 'warning';
-      case 'PENDING': return 'secondary';
-      default: return 'primary';
+    const normalizedStatus = status?.toUpperCase();
+    switch (normalizedStatus) {
+      case 'COMPLETED': 
+      case 'DONE': 
+        return 'success';
+      case 'IN_PROGRESS': 
+      case 'IN PROGRESS': 
+      case 'ONGOING': 
+        return 'warning';
+      case 'PENDING': 
+        return 'secondary';
+      default: 
+        return 'primary';
     }
   };
 
@@ -233,16 +250,19 @@ export default function HomePage() {
                     <div className="list-group list-group-flush">
                       {recentTasks.map((task, index) => (
                         <div 
-                          key={task.id} 
+                          key={task.id || index} 
                           className="list-group-item border-0 px-3 py-2"
                         >
                           <div className="d-flex justify-content-between align-items-start">
                             <div className="flex-grow-1">
                               <h6 className="mb-1" style={{ fontSize: '0.85rem' }}>{task.title}</h6>
-                              <div className="d-flex align-items-center gap-2">
+                              <div className="d-flex align-items-center gap-2 flex-wrap">
                                 <Badge bg={getStatusVariant(task.status)} style={{ fontSize: '0.7rem' }}>
                                   {task.status}
                                 </Badge>
+                                <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                                  Assigned to: {task.employeeName || 'Unassigned'}
+                                </small>
                                 <small className="text-muted" style={{ fontSize: '0.75rem' }}>
                                   {task.assignedDate ? new Date(task.assignedDate).toLocaleDateString() : 'No date'}
                                 </small>
@@ -250,7 +270,9 @@ export default function HomePage() {
                             </div>
                             <div className="text-end">
                               <small className="text-muted d-block" style={{ fontSize: '0.7rem' }}>#{task.id}</small>
-                              <small className="text-muted" style={{ fontSize: '0.75rem' }}>{task.projectname}</small>
+                              <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                                {task.projectName || 'No project'}
+                              </small>
                             </div>
                           </div>
                         </div>

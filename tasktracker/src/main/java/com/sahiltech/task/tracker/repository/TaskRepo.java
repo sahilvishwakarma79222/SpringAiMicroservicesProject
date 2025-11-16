@@ -47,6 +47,7 @@ public class TaskRepo {
     private static final String SQL_GET_BY_PROJECT = "SELECT * FROM tasks WHERE project_id=?";
     private static final String SQL_GET_BY_EMPLOYEE = "SELECT * FROM tasks WHERE employee_id=?";
 
+
     // ------------------ CRUD OPERATIONS ------------------
 
     public Task saveTask(Task task) {

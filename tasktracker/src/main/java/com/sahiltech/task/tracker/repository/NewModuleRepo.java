@@ -37,9 +37,14 @@ public class NewModuleRepo {
     """;
     private final String sqlGetAll = "SELECT * FROM modules";
     private final String sqlGetAllCount = "SELECT COUNT(*) FROM modules";
+    private static final String SQL_GET_BY_PROJECTID="SELECT * FROM modules where project_id=?";
 
-
-    // ✅ CREATE (with null safety)
+    //get by project Id
+    public List<NewModule> getModuleByProjectId(Long projectId){
+        List<NewModule> modules = jdbcTemplate.query(SQL_GET_BY_PROJECTID, new NewModuleRowMapper(), projectId);
+        return  modules;
+    }
+    //  savve
     public NewModule saveModule(NewModule module) {
         if (module == null) return null;
 

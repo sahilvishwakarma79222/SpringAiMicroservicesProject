@@ -14,8 +14,6 @@ import {
     Col
 } from "react-bootstrap";
 import {
-    FaEdit,
-    FaEye,
     FaSort,
     FaSortUp,
     FaSortDown,
@@ -23,7 +21,6 @@ import {
     FaFilter,
     FaChevronLeft,
     FaChevronRight,
-    FaEllipsisH,
     FaTasks,
     FaUser,
     FaCalendarAlt,
@@ -53,10 +50,13 @@ export default function MyTasksPage() {
 
     // Status color mapping
     const getStatusBadge = (status) => {
-        switch (status?.toUpperCase()) {
+        const normalizedStatus = status?.toUpperCase();
+        switch (normalizedStatus) {
             case 'COMPLETED':
+            case 'DONE':
                 return 'success';
             case 'IN_PROGRESS':
+            case 'IN PROGRESS':
             case 'ONGOING':
                 return 'warning';
             case 'PENDING':
@@ -68,7 +68,7 @@ export default function MyTasksPage() {
         }
     };
 
-    // 🔍 Fetch All Employees for Dropdown - TUMHARA API USE KAR RAHA HU
+    // 🔍 Fetch All Employees for Dropdown
     const fetchEmployees = async () => {
         setEmployeesLoading(true);
         try {
@@ -98,18 +98,22 @@ export default function MyTasksPage() {
                 `/task/employee/${selectedEmployee.id}/smart?page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}&search=${search}`
             );
 
-            setTasks(res.data.results || []);
-            setTotalPages(res.data.totalPages || 1);
-            setTotalRecords(res.data.totalRecords || 0);
+            // Handle different response structures
+            const tasksData = res.data?.results || res.data || [];
+            setTasks(tasksData);
+            setTotalPages(res.data?.totalPages || 1);
+            setTotalRecords(res.data?.totalRecords || tasksData.length);
 
         } catch (error) {
             console.error("Error fetching employee tasks:", error);
             // Fallback to all tasks with client-side filtering
             try {
                 const allTasksRes = await API.get("/task/all");
-                const employeeTasks = allTasksRes.data.filter(task =>
+                const allTasks = allTasksRes.data?.results || allTasksRes.data || [];
+                const employeeTasks = allTasks.filter(task =>
                     task.employeeId === selectedEmployee.id ||
-                    task.assignedTo === selectedEmployee.id
+                    task.assignedTo === selectedEmployee.id ||
+                    task.employeeName === selectedEmployee.name
                 );
                 setTasks(employeeTasks);
                 setTotalPages(1);
@@ -160,16 +164,6 @@ export default function MyTasksPage() {
     const formatDate = (dateString) => {
         if (!dateString) return "Not set";
         return new Date(dateString).toLocaleDateString();
-    };
-
-    // Quick Status Update
-    const handleQuickStatusUpdate = async (taskId, newStatus) => {
-        try {
-            await API.patch(`/task/updateStatus/${taskId}`, { status: newStatus });
-            fetchEmployeeTasks(); // Refresh the list
-        } catch (error) {
-            console.error("Error updating task status:", error);
-        }
     };
 
     // Pagination Functions
@@ -235,12 +229,23 @@ export default function MyTasksPage() {
     // Stats Calculation
     const stats = {
         total: tasks.length,
-        pending: tasks.filter(t => t.status === 'PENDING').length,
-        inProgress: tasks.filter(t => t.status === 'IN_PROGRESS' || t.status === 'ONGOING').length,
-        completed: tasks.filter(t => t.status === 'COMPLETED').length,
+        pending: tasks.filter(t => {
+            const status = t.status?.toUpperCase();
+            return status === 'PENDING';
+        }).length,
+        inProgress: tasks.filter(t => {
+            const status = t.status?.toUpperCase();
+            return status === 'IN_PROGRESS' || status === 'ONGOING' || status === 'IN PROGRESS';
+        }).length,
+        completed: tasks.filter(t => {
+            const status = t.status?.toUpperCase();
+            return status === 'COMPLETED' || status === 'DONE';
+        }).length,
         overdue: tasks.filter(t => {
-            if (!t.dueDate) return false;
-            return new Date(t.dueDate) < new Date() && t.status !== 'COMPLETED';
+            if (!t.dueDate && !t.assignedDate) return false;
+            const dueDate = t.dueDate || t.assignedDate;
+            return new Date(dueDate) < new Date() && 
+                   !(t.status?.toUpperCase() === 'COMPLETED' || t.status?.toUpperCase() === 'DONE');
         }).length
     };
 
@@ -477,25 +482,24 @@ export default function MyTasksPage() {
                                                     {getSortIcon("status")}
                                                 </div>
                                             </th>
-                                            <th style={{ cursor: "pointer", minWidth: "150px" }} onClick={() => handleSort("projectname")}>
+                                            <th style={{ cursor: "pointer", minWidth: "150px" }} onClick={() => handleSort("projectName")}>
                                                 <div className="d-flex align-items-center justify-content-between">
                                                     <span className="fw-semibold text-muted" style={{ fontSize: '0.8rem' }}>Project</span>
-                                                    {getSortIcon("projectname")}
+                                                    {getSortIcon("projectName")}
                                                 </div>
                                             </th>
-                                            <th style={{ cursor: "pointer", minWidth: "120px" }} onClick={() => handleSort("dueDate")}>
+                                            <th style={{ cursor: "pointer", minWidth: "120px" }} onClick={() => handleSort("assignedDate")}>
                                                 <div className="d-flex align-items-center justify-content-between">
-                                                    <span className="fw-semibold text-muted" style={{ fontSize: '0.8rem' }}>Due Date</span>
-                                                    {getSortIcon("dueDate")}
+                                                    <span className="fw-semibold text-muted" style={{ fontSize: '0.8rem' }}>Assigned Date</span>
+                                                    {getSortIcon("assignedDate")}
                                                 </div>
                                             </th>
-                                            <th style={{ minWidth: "150px" }} className="text-center fw-semibold text-muted" style={{ fontSize: '0.8rem' }}>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {loading ? (
                                             <tr>
-                                                <td colSpan="6" className="text-center py-4">
+                                                <td colSpan="5" className="text-center py-4">
                                                     <div className="d-flex justify-content-center align-items-center">
                                                         <Spinner animation="border" variant="primary" size="sm" className="me-2" />
                                                         <span className="text-muted" style={{ fontSize: '0.875rem' }}>Loading tasks...</span>
@@ -520,71 +524,37 @@ export default function MyTasksPage() {
                                                         )}
                                                     </td>
                                                     <td>
-                                                        <Dropdown onSelect={(status) => handleQuickStatusUpdate(task.id, status)}>
-                                                            <Dropdown.Toggle
-                                                                variant="outline-secondary"
-                                                                size="sm"
-                                                                className={`border-0 bg-${getStatusBadge(task.status)} text-white`}
-                                                                style={{ fontSize: '0.75rem' }}
-                                                            >
-                                                                {task.status}
-                                                            </Dropdown.Toggle>
-                                                            <Dropdown.Menu style={{ fontSize: '0.8rem' }}>
-                                                                <Dropdown.Item eventKey="PENDING">Pending</Dropdown.Item>
-                                                                <Dropdown.Item eventKey="IN_PROGRESS">In Progress</Dropdown.Item>
-                                                                <Dropdown.Item eventKey="COMPLETED">Completed</Dropdown.Item>
-                                                                <Dropdown.Item eventKey="ON_HOLD">On Hold</Dropdown.Item>
-                                                            </Dropdown.Menu>
-                                                        </Dropdown>
+                                                        <Badge 
+                                                            bg={getStatusBadge(task.status)}
+                                                            style={{ fontSize: '0.75rem' }}
+                                                        >
+                                                            {task.status}
+                                                        </Badge>
                                                     </td>
                                                     <td>
                                                         <div className="d-flex align-items-center">
                                                             <FaProjectDiagram className="text-primary me-2" size={14} />
-                                                            <span style={{ fontSize: '0.85rem' }}>{task.projectname || 'No Project'}</span>
+                                                            <span style={{ fontSize: '0.85rem' }}>{task.projectName || 'No Project'}</span>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <div className={`fw-medium ${new Date(task.dueDate) < new Date() && task.status !== 'COMPLETED'
-                                                            ? 'text-danger'
-                                                            : 'text-dark'
+                                                        <div className={`fw-medium ${new Date(task.assignedDate) < new Date() && 
+                                                            !(task.status?.toUpperCase() === 'COMPLETED' || task.status?.toUpperCase() === 'DONE')
+                                                                ? 'text-danger'
+                                                                : 'text-dark'
                                                             }`} style={{ fontSize: '0.85rem' }}>
-                                                            {formatDate(task.dueDate)}
+                                                            {formatDate(task.assignedDate)}
                                                         </div>
-                                                        {new Date(task.dueDate) < new Date() && task.status !== 'COMPLETED' && (
+                                                        {new Date(task.assignedDate) < new Date() && 
+                                                         !(task.status?.toUpperCase() === 'COMPLETED' || task.status?.toUpperCase() === 'DONE') && (
                                                             <small className="text-danger" style={{ fontSize: '0.75rem' }}>Overdue</small>
                                                         )}
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-center gap-1">
-                                                            <Button
-                                                                variant="outline-primary"
-                                                                size="sm"
-                                                                className="d-flex align-items-center"
-                                                                onClick={() => {/* Add view functionality */ }}
-                                                                title="View Details"
-                                                                style={{ fontSize: '0.8rem' }}
-                                                            >
-                                                                <FaEye className="me-1" />
-                                                                View
-                                                            </Button>
-                                                            <Button
-                                                                variant="outline-warning"
-                                                                size="sm"
-                                                                className="d-flex align-items-center"
-                                                                onClick={() => {/* Add edit functionality */ }}
-                                                                title="Edit Task"
-                                                                style={{ fontSize: '0.8rem' }}
-                                                            >
-                                                                <FaEdit className="me-1" />
-                                                                Edit
-                                                            </Button>
-                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="6" className="text-center py-4">
+                                                <td colSpan="5" className="text-center py-4">
                                                     <div className="text-muted">
                                                         <FaTasks size={32} className="mb-2 opacity-25" />
                                                         <h6 className="mb-2" style={{ fontSize: '1rem' }}>No tasks found</h6>

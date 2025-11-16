@@ -43,6 +43,7 @@ public ResponseEntity<Project> saveProject(@RequestBody Project project){
         List<Project> projects = service.getAllProjects();
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
+    
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateProject(@PathVariable Long id,@RequestBody Project project){
         String msg = service.updateProject(id, project);
