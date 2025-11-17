@@ -72,7 +72,7 @@ export default function TasksPage() {
   // Page size options
   const pageSizeOptions = [5, 10, 20, 50];
 
-  // Status colors - waise color show karne ke liye
+  // Status colors
   const statusColors = {
     "Completed": "success",
     "In Progress": "warning",
@@ -128,13 +128,18 @@ export default function TasksPage() {
     }
   };
 
-  const fetchModules = async () => {
+  const fetchModules = async (projectId) => {
     setModulesLoading(true);
     try {
-      const res = await API.get("/modules/smart?page=1&size=100");
-      setModules(res.data.results || res.data || []);
+      if (projectId) {
+        const res = await API.get(`/modules/getByProjectId/${projectId}`);
+        setModules(res.data.results || res.data || []);
+      } else {
+        setModules([]);
+      }
     } catch (err) {
       console.error("Error fetching modules:", err);
+      setModules([]);
     } finally {
       setModulesLoading(false);
     }
@@ -149,10 +154,18 @@ export default function TasksPage() {
     }
   };
 
+  // Fetch modules when project is selected
+  useEffect(() => {
+    if (formData.projectId) {
+      fetchModules(formData.projectId);
+    } else {
+      setModules([]);
+    }
+  }, [formData.projectId]);
+
   useEffect(() => {
     fetchTasks();
     fetchProjects();
-    fetchModules();
     fetchEmployees();
   }, [page, size, search, sortBy, sortDir]);
 
@@ -172,6 +185,7 @@ export default function TasksPage() {
     });
     setEditId(null);
     setSelectedTask(null);
+    setModules([]);
   };
 
   const handleSave = async () => {
@@ -203,7 +217,6 @@ export default function TasksPage() {
 
   const handleEdit = async (task) => {
     try {
-      // Fetch complete task data by ID for editing
       const fullTaskData = await fetchTaskById(task.id);
       
       if (fullTaskData) {
@@ -218,8 +231,12 @@ export default function TasksPage() {
           assignedDate: fullTaskData.assignedDate || "",
           completedDate: fullTaskData.completedDate || ""
         });
+        
+        // Fetch modules for the selected project
+        if (fullTaskData.projectId) {
+          fetchModules(fullTaskData.projectId);
+        }
       } else {
-        // Fallback to table data if individual fetch fails
         setFormData({
           title: task.title || "",
           description: "",
@@ -254,7 +271,6 @@ export default function TasksPage() {
 
   const handleView = async (task) => {
     try {
-      // Fetch complete task data by ID for viewing
       const fullTaskData = await fetchTaskById(task.id);
       setSelectedTask(fullTaskData || task);
       setShowViewModal(true);
@@ -787,7 +803,17 @@ export default function TasksPage() {
                   <Form.Label style={{ fontSize: '0.85rem' }}>Project *</Form.Label>
                   <Form.Select
                     value={formData.projectId}
-                    onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
+                    onChange={(e) => {
+                      const selectedProjectId = e.target.value;
+                      setFormData({ 
+                        ...formData, 
+                        projectId: selectedProjectId,
+                        moduleId: "" // Reset module when project changes
+                      });
+                      if (selectedProjectId) {
+                        fetchModules(selectedProjectId);
+                      }
+                    }}
                     required
                     style={{ fontSize: '0.85rem' }}
                   >
@@ -806,7 +832,7 @@ export default function TasksPage() {
                     value={formData.moduleId}
                     onChange={(e) => setFormData({ ...formData, moduleId: e.target.value })}
                     style={{ fontSize: '0.85rem' }}
-                    disabled={modulesLoading}
+                    disabled={modulesLoading || !formData.projectId}
                   >
                     <option value="">Select Module</option>
                     {modules.map(module => (
@@ -818,6 +844,11 @@ export default function TasksPage() {
                   {modulesLoading && (
                     <small className="text-muted" style={{ fontSize: '0.75rem' }}>
                       Loading modules...
+                    </small>
+                  )}
+                  {!formData.projectId && !modulesLoading && (
+                    <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                      Please select a project first
                     </small>
                   )}
                 </Form.Group>

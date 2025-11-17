@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Doors - Shree Doors</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar (Same as index.html) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <ul>
+                    <li><a href="main-doors.html" class="active">Main Doors</a></li>
+                    <li class="dropdown">
+                        <a href="#">Doors <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="interior-doors.html">Interior Doors</a>
+                            <a href="veneer-doors.html">Veneer Doors</a>
+                            <a href="wooden-doors.html">Wooden Doors</a>
+                        </div>
+                    </li>
+                    <li><a href="windows.html">Windows</a></li>
+                </ul>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="logo">
+                    <img src="images/logo/shree-doors-logo.png" alt="Shree Doors">
+                </a>
+            </div>
+            <div class="nav-right">
+                <ul>
+                    <li><a href="index.html#collections">Collections</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="mobile-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Main Doors</h1>
+            <p>Discover quality doors that combine style, security, and durability</p>
+        </div>
+    </section>
+
+    <!-- Category Navigation -->
+    <section class="category-nav">
+        <div class="container">
+            <div class="category-links">
+                <a href="#" class="active">All Main Doors</a>
+                <a href="#">Double Main Doors</a>
+                <a href="#">Glass Main Doors</a>
+                <a href="#">Single Main Doors</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section with Filters -->
+    <section class="products-section">
+        <div class="container">
+            <div class="products-layout">
+                <!-- Filters Sidebar -->
+                <aside class="filters-sidebar">
+                    <h3>Filter By</h3>
+                    
+                    <!-- Collection Filter -->
+                    <div class="filter-group">
+                        <h4>Collection</h4>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="collection" value="jodhpur-lancers"> Jodhpur Lancers (10)</label>
+                            <label><input type="checkbox" name="collection" value="jodhpur-rasala"> Jodhpur Rasala (15)</label>
+                            <label><input type="checkbox" name="collection" value="maharaja"> Maharaja (81)</label>
+                            <label><input type="checkbox" name="collection" value="maharani"> Maharani (151)</label>
+                            <label><input type="checkbox" name="collection" value="mysore-lancers"> Mysore Lancers (7)</label>
+                            <label><input type="checkbox" name="collection" value="puna-horse"> Puna Horse (12)</label>
+                        </div>
+                    </div>
+
+                    <!-- Material Filter -->
+                    <div class="filter-group">
+                        <h4>Materials</h4>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="material" value="glass"> Glass (67)</label>
+                            <label><input type="checkbox" name="material" value="wood"> Wood (276)</label>
+                        </div>
+                    </div>
+
+                    <!-- Finishes Filter -->
+                    <div class="filter-group">
+                        <h4>Finishes</h4>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="finish" value="black-lacquered"> Black Lacquered (1)</label>
+                            <label><input type="checkbox" name="finish" value="boulder"> Boulder (9)</label>
+                            <label><input type="checkbox" name="finish" value="cream"> Cream (50)</label>
+                            <label><input type="checkbox" name="finish" value="dark-walnut"> Dark Walnut (80)</label>
+                            <label><input type="checkbox" name="finish" value="honey"> Honey (58)</label>
+                            <label><input type="checkbox" name="finish" value="white"> White Lacquered (24)</label>
+                        </div>
+                    </div>
+
+                    <button class="apply-filters">Apply Filters</button>
+                    <button class="reset-filters">Reset</button>
+                </aside>
+
+                <!-- Products Grid -->
+                <div class="products-grid-container">
+                    <div class="products-header">
+                        <p>Showing 1–12 of 278 results</p>
+                        <div class="sort-options">
+                            <select>
+                                <option>Default sorting</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                                <option>Newest First</option>
+                            </select>
+                            <select>
+                                <option>Show 9</option>
+                                <option>Show 12</option>
+                                <option>Show 18</option>
+                                <option>Show 24</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="products-grid">
+                        <!-- Product items will be loaded here -->
+                        <div class="product-item">
+                            <img src="images/main-doors/jodhpur-risala-12.jpg" alt="Jodhpur Risala 12" loading="lazy">
+                            <h3>Jodhpur Risala 12</h3>
+                            <button class="view-details">View Details</button>
+                        </div>
+                        <div class="product-item">
+                            <img src="images/main-doors/jodhpur-risala-10.jpg" alt="Jodhpur Risala 10" loading="lazy">
+                            <h3>Jodhpur Risala 10</h3>
+                            <button class="view-details">View Details</button>
+                        </div>
+                        <!-- More product items... -->
+                    </div>
+
+                    <div class="pagination">
+                        <button class="load-more">Load more products</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Same as index.html) -->
+    <footer class="footer">
+        <!-- Footer content from index.html -->
+    </footer>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img src="" alt="Product Image">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-description"></p>
+                    <div class="modal-specs">
+                        <h3>Specifications</h3>
+                        <ul id="modal-specs-list"></ul>
+                    </div>
+                    <button class="inquiry-btn">Make Inquiry</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
