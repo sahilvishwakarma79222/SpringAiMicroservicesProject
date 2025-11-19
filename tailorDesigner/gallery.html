@@ -1181,49 +1181,34 @@
     // Configuration
     const ITEMS_PER_PAGE = 12;
     const LOAD_DELAY = 500;
-    const MAX_IMAGES_PER_CATEGORY = 150;
+    const MAX_IMAGES_PER_CATEGORY = 50;
 
-    // Folder structure configuration - UPDATED FOR ALL FOLDER
+    // Folder structure configuration
     const FOLDER_STRUCTURE = {
       'all': {
         path: 'all/',
         prefix: 'Design'
       },
       'blouse': {
-        path: 'all/',
+        path: 'blouse/',
         prefix: 'Blouse Design'
       },
       'suit': {
-        path: 'all/',
+        path: 'suit/',
         prefix: 'Suit Design'
       },
       'saree': {
-        path: 'all/',
+        path: 'saree/',
         prefix: 'Saree Design'
       },
       'lehenga': {
-        path: 'all/',
+        path: 'lehenga/',
         prefix: 'Lehenga Design'
       },
       'alteration': {
-        path: 'all/',
+        path: 'alteration/',
         prefix: 'Alteration Work'
       }
-    };
-
-    // Image mapping - Define which images belong to which categories
-    // This is a sample mapping - you'll need to update this based on your actual images
-    const IMAGE_CATEGORIES = {
-      // Blouse images (example - update with your actual image numbers)
-      'blouse': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-      // Suit images (example - update with your actual image numbers)
-      'suit': [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-      // Saree images (example - update with your actual image numbers)
-      'saree': [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
-      // Lehenga images (example - update with your actual image numbers)
-      'lehenga': [31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
-      // Alteration images (example - update with your actual image numbers)
-      'alteration': [41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
     };
 
     // Check if an image exists
@@ -1241,38 +1226,31 @@
       const galleryData = [];
       let id = 1;
       
-      // First, check which images exist in the "all" folder
-      const allImages = [];
+      // Check each category folder for images
+      // Check each category folder for images
+  for (const [category, folderInfo] of Object.entries(FOLDER_STRUCTURE)) {
+    console.log(`Checking images in ${category} folder...`);
+    
+    for (let i = 1; i <= MAX_IMAGES_PER_CATEGORY; i++) {
+      const imagePath = `${folderInfo.path}${i}.webp`;
+      const exists = await checkImageExists(imagePath);
       
-      for (let i = 1; i <= MAX_IMAGES_PER_CATEGORY; i++) {
-        const imagePath = `${FOLDER_STRUCTURE.all.path}${i}.webp`;
-        const exists = await checkImageExists(imagePath);
-        
-        if (exists) {
-          // Determine category for this image
-          let category = 'all';
-          for (const [cat, images] of Object.entries(IMAGE_CATEGORIES)) {
-            if (images.includes(i)) {
-              category = cat;
-              break;
-            }
-          }
-          
-          allImages.push({
-            id: id++,
-            category: category,
-            title: `${FOLDER_STRUCTURE.all.prefix} ${i}`,
-            image: imagePath
-          });
-        } else {
-          // Stop checking if image doesn't exist
-          break;
-        }
+      if (exists) {
+        galleryData.push({
+          id: id++,
+          category: category,
+          title: `${folderInfo.prefix} ${i}`,
+          image: imagePath
+        });
+      } else {
+        // Stop checking this folder if image doesn't exist
+        console.log(`Found ${i-1} images in ${category} folder`);
+        break;
       }
+    }
+  }
       
-      galleryData.push(...allImages);
-      console.log(`Found ${allImages.length} images in all folder`);
-      
+      console.log(`Total images found across all categories: ${galleryData.length}`);
       return galleryData;
     }
 
