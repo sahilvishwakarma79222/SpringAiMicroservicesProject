@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ambernath Ladies Tailor | Premium Tailoring Services</title>
+  <meta name="description" content="10+ years experienced ladies tailor in Ambernath. Perfect fitting guaranteed. Designer blouses, suits, lehengas & alterations.">
+
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --accent: #7C3AED; /* Enhanced purple accent */
+      --accent-light: #f3f0ff;
+      --accent-dark: #5B21B6;
+      --pink: #fdf2f8;
+      --peach: #ffedd5;
+      --cream: #fef7ed;
+      --light-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.15);
+      --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+
+    /* NAVBAR WRAPPER */
+    .nav-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow);
+    }
+
+    .nav {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+    }
+
+    /* LOGO */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: default;
+      text-decoration: none;
+      color: var(--text);
+      transition: var(--transition);
+    }
+    
+    .logo:hover {
+      transform: translateY(-1px);
+    }
+    
+    .logo .mark {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+      transition: var(--transition);
+    }
+    
+    .logo:hover .mark {
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+    }
+    
+    .logo .text {
+      line-height: 1.2;
+    }
+    
+    .logo .name {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 0.2px;
+    }
+    
+    .logo .sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0;
+      z-index: 1000;
+    }
+    
+    .mobile-menu-toggle span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: var(--text);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* NAV ITEMS */
+    .nav-items {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .nav-list {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      list-style: none;
+    }
+    
+    .nav-list a {
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      color: var(--text);
+      font-weight: 500;
+      transition: var(--transition);
+      font-size: 15px;
+      position: relative;
+    }
+    
+    .nav-list a:hover {
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+    
+    .nav-list a.active {
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+    }
+    
+    .nav-list a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* Main Content Styles */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    
+    section {
+      padding: 100px 0;
+    }
+    
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    
+    .section-subtitle {
+      font-size: 1.25rem;
+      text-align: center;
+      color: var(--muted);
+      max-width: 700px;
+      margin: 0 auto 4rem;
+      line-height: 1.6;
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #fdf2f8 0%, #fef7ed 50%, #f3f0ff 100%);
+      padding: 140px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237C3AED' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.6;
+    }
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    
+    .hero p {
+      font-size: 1.375rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    
+    .hero-btns {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn-primary {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 16px 32px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 16px 32px;
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+    }
+    
+    /* Owner Section */
+    .owner-section {
+      background: var(--light-bg);
+    }
+    
+    .owner-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 80px;
+      align-items: center;
+    }
+    
+    .owner-image {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    
+    .owner-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: var(--transition);
+    }
+    
+    .owner-image:hover img {
+      transform: scale(1.03);
+    }
+    
+    .owner-details h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    
+    .owner-details h3 {
+      font-size: 1.375rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .owner-details p {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    
+    .owner-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 2.5rem;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 24px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    
+    .stat-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    /* USP Section */
+    .usp-section {
+      background: var(--bg);
+    }
+    
+    .usp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+    
+    .usp-card {
+      background: var(--card-bg);
+      padding: 40px 32px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .usp-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .usp-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-size: 2rem;
+      transition: var(--transition);
+    }
+    
+    .usp-card:hover .usp-icon {
+      background: var(--accent);
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    .usp-card h3 {
+      font-size: 1.375rem;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    
+    .usp-card p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    
+    /* Services Section */
+    .services-section {
+      background: var(--light-bg);
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+    }
+    
+    .service-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .service-img {
+      height: 220px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--accent-light) 100%);
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-size: 3.5rem;
+      transition: var(--transition);
+    }
+    
+    .service-card:hover .service-img {
+      background: linear-gradient(135deg, var(--accent-light) 0%, var(--pink) 100%);
+    }
+    
+    .service-content {
+      padding: 32px;
+    }
+    
+    .service-content h3 {
+      font-size: 1.375rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    
+    .service-content p {
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    
+    .service-price {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 1.25rem;
+    }
+    
+    /* Story Section */
+    .story-section {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--cream) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .story-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237C3AED' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .story-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .story-content p {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      color: var(--muted);
+    }
+    
+    .quote {
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin: 3rem 0;
+      padding: 0 2rem;
+      position: relative;
+      line-height: 1.6;
+    }
+    
+    .quote::before, .quote::after {
+      content: '"';
+      font-size: 4rem;
+      color: var(--accent-light);
+      position: absolute;
+      top: -1rem;
+      opacity: 0.7;
+    }
+    
+    .quote::before {
+      left: 0;
+    }
+    
+    .quote::after {
+      right: 0;
+    }
+    
+    /* Gallery Section */
+    .gallery-section {
+      background: var(--bg);
+    }
+    
+    .gallery-filters {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      padding: 12px 24px;
+      background: var(--card-bg);
+      border: 2px solid var(--accent-light);
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--text);
+    }
+    
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+    
+    .gallery-item {
+      height: 300px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--accent-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-weight: 600;
+      transition: var(--transition);
+      position: relative;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .gallery-item .placeholder {
+      font-size: 1.125rem;
+      text-align: center;
+    }
+    
+    .view-all-btn {
+      display: block;
+      margin: 0 auto;
+      padding: 16px 40px;
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .view-all-btn:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+    }
+    
+    /* Pricing Section */
+    .pricing-section {
+      background: var(--light-bg);
+    }
+    
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+    
+    .pricing-card {
+      background: var(--card-bg);
+      padding: 40px 32px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+    
+    .pricing-card.featured {
+      transform: scale(1.05);
+      border: 2px solid var(--accent);
+    }
+    
+    .pricing-card.featured::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: white;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .pricing-card.featured:hover {
+      transform: scale(1.05) translateY(-8px);
+    }
+    
+    .pricing-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    
+    .price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+    
+    .pricing-features li {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: bold;
+    }
+    
+    /* Contact Section */
+    .contact-section {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--peach) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .contact-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237C3AED' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 48px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    
+    .contact-item {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    
+    .contact-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    
+    .contact-item:hover .contact-icon {
+      background: var(--accent);
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    .contact-details h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .contact-details p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    
+    .contact-form {
+      background: var(--card-bg);
+      padding: 40px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .form-group {
+      margin-bottom: 24px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--radius);
+      font-family: inherit;
+      transition: var(--transition);
+      background: var(--bg);
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+    
+    textarea.form-control {
+      min-height: 140px;
+      resize: vertical;
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--text);
+      color: white;
+      padding: 80px 0 40px;
+    }
+    
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 48px;
+      margin-bottom: 48px;
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 24px;
+    }
+    
+    .footer-col h3 {
+      font-size: 1.25rem;
+      margin-bottom: 24px;
+      position: relative;
+      padding-bottom: 12px;
+    }
+    
+    .footer-col h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--accent);
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+    
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      padding-left: 8px;
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.875rem;
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    
+    /* ========== RESPONSIVE STYLES ========== */
+
+    /* Tablet Styles (768px and below) */
+    @media (max-width: 768px) {
+      .nav {
+        padding: 12px 20px;
+      }
+      
+      .mobile-menu-toggle {
+        display: flex;
+      }
+      
+      .nav-items {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: white;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        flex-direction: column;
+        padding: 20px;
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: var(--transition);
+        z-index: 998;
+        pointer-events: none;
+      }
+      
+      .nav-items.active {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+      
+      .nav-list {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .nav-list a {
+        width: 100%;
+        text-align: center;
+        padding: 12px 16px;
+      }
+      
+      .nav-list a.active::after {
+        display: none;
+      }
+      
+      .hero h1 {
+        font-size: 3rem;
+      }
+      
+      .hero p {
+        font-size: 1.125rem;
+      }
+      
+      .section-title {
+        font-size: 2.5rem;
+      }
+      
+      .hero-btns {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+      
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      
+      .gallery-item {
+        height: 250px;
+      }
+      
+      .owner-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      
+      .owner-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .pricing-card.featured {
+        transform: none;
+      }
+      
+      .pricing-card.featured:hover {
+        transform: translateY(-8px);
+      }
+    }
+
+    /* Mobile Styles (480px and below) */
+    @media (max-width: 480px) {
+      .nav {
+        padding: 10px 16px;
+      }
+      
+      .logo .mark {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+      }
+      
+      .logo .name {
+        font-size: 16px;
+      }
+      
+      .logo .sub {
+        font-size: 10px;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+      }
+      
+      .gallery-filters {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 10px;
+      }
+      
+      .filter-btn {
+        width: 200px;
+      }
+      
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      
+      .footer-col h3 {
+        font-size: 1rem;
+      }
+      
+      .footer-links a {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Small Mobile Styles (360px and below) */
+    @media (max-width: 360px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .filter-btn {
+        width: 100%;
+        max-width: 200px;
+      }
+      
+      .view-all-btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <div class="nav-wrap">
+    <div class="nav">
+      <a class="logo" href="index.html" aria-label="Ambernath Ladies Tailor">
+        <div class="mark">MV</div>
+        <div class="text">
+          <div class="name">Mansha Vishwakarma</div>
+          <div class="sub">by Mansha Vishwakarma</div>
+        </div>
+      </a>
+
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-items" id="navItems">
+        <div class="nav-list" role="navigation" aria-label="Main Navigation">
+          <a class="active" href="index.html#home">Home</a>
+          <a href="index.html#about">About</a>
+          <a href="index.html#services">Services</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="index.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1>Perfect Fit, Every Time</h1>
+      <p>10+ years of expertise in ladies tailoring. Specializing in designer blouses, suits, lehengas, and alterations with guaranteed perfect fitting.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-primary">Book Consultation</a>
+        <a href="#gallery" class="btn-secondary">View Our Work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Owner Section -->
+  <section class="owner-section" id="about">
+    <div class="container">
+      <div class="owner-content">
+        <div class="owner-image">
+          <!-- Dummy image - replace with actual image -->
+          <img src="user/mummy.jpeg">
+        </div>
+        <div class="owner-details">
+          <h2>Meet Mansha Vishwakarma</h2>
+          <h3>Master Tailor & Founder</h3>
+          <p>With over a decade of experience in ladies tailoring, Mansha Vishwakarma has perfected the art of creating garments that fit flawlessly. Her journey began with stitching clothes for neighbors, and through word-of-mouth recommendations, she has become one of Ambernath's most trusted tailors.</p>
+          <p>Specializing in designer blouses and intricate embroidery work, Mansha combines traditional techniques with modern designs to create stunning outfits for all occasions. Her attention to detail and commitment to perfect fitting has earned her a loyal customer base across Ambernath.</p>
+          
+          <div class="owner-stats">
+            <div class="stat-item">
+              <div class="stat-number">10+</div>
+              <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">500+</div>
+              <div class="stat-label">Happy Customers</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Satisfaction Guarantee</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USP Section -->
+  <section class="usp-section">
+    <div class="container">
+      <h2 class="section-title">Why Choose Us</h2>
+      <p class="section-subtitle">Trusted by hundreds of customers in Ambernath for our exceptional quality and service</p>
+      
+      <div class="usp-grid">
+        <div class="usp-card">
+          <div class="usp-icon">✓</div>
+          <h3>Perfect Fitting Guaranteed</h3>
+          <p>We ensure every garment fits you perfectly, with attention to your unique body measurements.</p>
+        </div>
+        
+        <div class="usp-card">
+          <div class="usp-icon">⚡</div>
+          <h3>Fast Delivery</h3>
+          <p>Get your outfits ready when you need them with our efficient and timely service.</p>
+        </div>
+        
+        <div class="usp-card">
+          <div class="usp-icon">👗</div>
+          <h3>Designer Blouse Specialist</h3>
+          <p>Expert in creating beautiful designer blouses that complement your style and personality.</p>
+        </div>
+        
+        <div class="usp-card">
+          <div class="usp-icon">✂️</div>
+          <h3>Alteration Expert</h3>
+          <p>Professional alterations to make your existing outfits fit perfectly and look brand new.</p>
+        </div>
+        
+        <div class="usp-card">
+          <div class="usp-icon">🧵</div>
+          <h3>Fabric Guidance</h3>
+          <p>We help you choose the right fabrics that suit your design, occasion, and comfort.</p>
+        </div>
+        
+        <div class="usp-card">
+          <div class="usp-icon">⭐</div>
+          <h3>Trusted & Recommended</h3>
+          <p>Highly recommended by local leaders and trusted by a huge repeat customer base.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services-section" id="services">
+    <div class="container">
+      <h2 class="section-title">Our Services</h2>
+      <p class="section-subtitle">Comprehensive tailoring solutions for all your clothing needs</p>
+      
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-img">👚</div>
+          <div class="service-content">
+            <h3>Blouse Stitching</h3>
+            <p>Normal and designer blouses with perfect fitting and intricate detailing.</p>
+            <div class="service-price">Starting at ₹500</div>
+          </div>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-img">👗</div>
+          <div class="service-content">
+            <h3>Suit / Dress Stitching</h3>
+            <p>Beautiful suits and dresses tailored to your measurements and style preference.</p>
+            <div class="service-price">Starting at ₹600</div>
+          </div>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-img">🥻</div>
+          <div class="service-content">
+            <h3>Saree Stitching</h3>
+            <p>Elegant saree blouses and pleating services for traditional and modern looks.</p>
+            <div class="service-price">Starting at ₹700</div>
+          </div>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-img">👖</div>
+          <div class="service-content">
+            <h3>Salwar / Churidar</h3>
+            <p>Comfortable and stylish salwar kameez and churidar sets with perfect fitting.</p>
+            <div class="service-price">Starting at ₹600</div>
+          </div>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-img">💃</div>
+          <div class="service-content">
+            <h3>Lehenga Custom Stitching</h3>
+            <p>Stunning lehengas for weddings and special occasions with intricate work.</p>
+            <div class="service-price">Starting at ₹1000</div>
+          </div>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-img">✂️</div>
+          <div class="service-content">
+            <h3>Alterations</h3>
+            <p>Professional alterations for all ladies wear to ensure perfect fit and comfort.</p>
+            <div class="service-price">Starting at ₹400</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story Section -->
+  <section class="story-section">
+    <div class="container">
+      <h2 class="section-title">Our Story</h2>
+      <div class="story-content">
+        <p>Mansha Vishwakarma began her journey in tailoring over a decade ago, initially learning sewing casually at home and stitching clothes only for neighbors. Her passion for creating perfectly fitted garments quickly became apparent as people started noticing her exceptional attention to detail and fitting precision.</p>
+        
+        <p class="quote">"Word of mouth grew — today she handles many customers daily and is known for perfect fitting and designer blouse expertise."</p>
+        
+        <p>Despite several famous tailoring shops in the area, customers from across Ambernath East specifically seek out her services. Trusted by local leaders and with a huge repeat customer base, Mansha continues to deliver exceptional tailoring with a personal touch that keeps clients coming back year after year.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="gallery-section" id="gallery">
+    <div class="container">
+      <h2 class="section-title">Our Gallery</h2>
+      <p class="section-subtitle">Explore our craftsmanship across different categories</p>
+      
+      <div class="gallery-filters">
+        <button class="filter-btn active" data-category="all">All</button>
+        <button class="filter-btn" data-category="blouse">Blouse Designs</button>
+        <button class="filter-btn" data-category="suit">Suit Designs</button>
+        <button class="filter-btn" data-category="saree">Saree Designs</button>
+        <button class="filter-btn" data-category="lehenga">Lehenga</button>
+        <button class="filter-btn" data-category="alteration">Alterations</button>
+      </div>
+      
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- Gallery items will be populated by JavaScript -->
+      </div>
+      
+      <button class="view-all-btn" id="viewAllBtn">View All Designs</button>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <h2 class="section-title">Pricing</h2>
+      <p class="section-subtitle">Transparent pricing for all our services</p>
+      
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Basic Blouse</h3>
+          <div class="price">₹500</div>
+          <ul class="pricing-features">
+            <li>Perfect fitting guaranteed</li>
+            <li>Standard design</li>
+            <li>Basic fabric guidance</li>
+            <li>7-day delivery</li>
+          </ul>
+          <a href="#contact" class="btn-primary">Book Now</a>
+        </div>
+        
+        <div class="pricing-card featured">
+          <h3>Designer Blouse</h3>
+          <div class="price">₹600-700</div>
+          <ul class="pricing-features">
+            <li>Perfect fitting guaranteed</li>
+            <li>Custom designer patterns</li>
+            <li>Detailed fabric guidance</li>
+            <li>Intricate detailing</li>
+            <li>5-day delivery</li>
+          </ul>
+          <a href="#contact" class="btn-primary">Book Now</a>
+        </div>
+        
+        <div class="pricing-card">
+          <h3>Lehenga / Special Occasion</h3>
+          <div class="price">₹1000-3000</div>
+          <ul class="pricing-features">
+            <li>Perfect fitting guaranteed</li>
+            <li>Custom design consultation</li>
+            <li>Premium fabric guidance</li>
+            <li>Intricate embroidery options</li>
+            <li>Flexible delivery timeline</li>
+          </ul>
+          <a href="#contact" class="btn-primary">Book Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <h2 class="section-title">Get In Touch</h2>
+      <p class="section-subtitle">Ready to create your perfect outfit? Contact us today!</p>
+      
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div class="contact-details">
+              <h3>Location</h3>
+              <p>Ambernath, Maharashtra<br>Servicing Ambernath West & East</p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div class="contact-details">
+              <h3>Phone</h3>
+              <p><a href="tel:9637621369" style="color:inherit; text-decoration:none;">9637621369</a></p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <div class="contact-icon">💬</div>
+            <div class="contact-details">
+              <h3>WhatsApp</h3>
+              <p><a href="https://wa.me/919637621369" style="color:inherit; text-decoration:none;">+91 9637621369</a></p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <div class="contact-icon">⏰</div>
+            <div class="contact-details">
+              <h3>Working Hours</h3>
+              <p>Monday - Saturday: 9 AM - 7 PM</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="contact-form">
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="service">Service Required</label>
+              <select id="service" class="form-control" required>
+                <option value="">Select a service</option>
+                <option value="blouse">Blouse Stitching</option>
+                <option value="designer-blouse">Designer Blouse</option>
+                <option value="suit">Suit/Dress Stitching</option>
+                <option value="saree">Saree Stitching</option>
+                <option value="lehenga">Lehenga Stitching</option>
+                <option value="alteration">Alteration</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Additional Details</label>
+              <textarea id="message" class="form-control" placeholder="Tell us about your requirements..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn-primary" style="width:100%;">Send Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>Ambernath Ladies Tailor</h3>
+          <p style="color:rgba(255,255,255,0.7); margin-top:16px;">10+ years of expertise in ladies tailoring with guaranteed perfect fitting.</p>
+        </div>
+        
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#services">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="index.html#pricing">Pricing</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h3>Services</h3>
+          <ul class="footer-links">
+            <li><a href="index.html#services">Blouse Stitching</a></li>
+            <li><a href="index.html#services">Designer Blouses</a></li>
+            <li><a href="index.html#services">Suit Stitching</a></li>
+            <li><a href="index.html#services">Lehenga Stitching</a></li>
+            <li><a href="index.html#services">Alterations</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h3>Contact</h3>
+          <ul class="footer-links">
+            <li><a href="tel:7878787878">Call: 7878787878</a></li>
+            <li><a href="https://wa.me/917878788778">WhatsApp</a></li>
+            <li><a href="index.html#contact">Book Consultation</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2023 Ambernath Ladies Tailor. All rights reserved. | Crafted with care by Mansha Vishwakarma</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const navItems = document.getElementById('navItems');
+    
+    mobileMenuToggle.addEventListener('click', () => {
+      const open = navItems.classList.toggle('active');
+      mobileMenuToggle.classList.toggle('active');
+      mobileMenuToggle.setAttribute('aria-expanded', String(open));
+    });
+
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll('.nav-list a').forEach(link => {
+      link.addEventListener('click', () => {
+        navItems.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!navItems.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+        navItems.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Folder structure configuration
+    const FOLDER_STRUCTURE = {
+      'blouse': {
+        path: 'blouse/',
+        count: 20,
+        prefix: 'Blouse Design'
+      },
+      'suit': {
+        path: 'suit/',
+        count: 15,
+        prefix: 'Suit Design'
+      },
+      'saree': {
+        path: 'saree/',
+        count: 18,
+        prefix: 'Saree Design'
+      },
+      'lehenga': {
+        path: 'lehenga/',
+        count: 12,
+        prefix: 'Lehenga Design'
+      },
+      'alteration': {
+        path: 'alteration/',
+        count: 8,
+        prefix: 'Alteration Work'
+      }
+    };
+
+    // Generate gallery data from local folders
+    function generateGalleryData() {
+      const galleryData = [];
+      let id = 1;
+      
+      Object.entries(FOLDER_STRUCTURE).forEach(([category, config]) => {
+        // Show only 2-3 images from each category for homepage
+        const itemsToShow = Math.min(3, config.count);
+        for (let i = 1; i <= itemsToShow; i++) {
+          galleryData.push({
+            id: id++,
+            category: category,
+            title: `${config.prefix} ${i}`,
+            image: `${config.path}${i}.webp`
+          });
+        }
+      });
+      
+      return galleryData;
+    }
+
+    // Display gallery items
+    function displayGalleryItems() {
+      const galleryGrid = document.getElementById('galleryGrid');
+      const galleryData = generateGalleryData();
+      
+      galleryData.forEach((item, index) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        galleryItem.setAttribute('data-category', item.category);
+        
+        galleryItem.innerHTML = `
+          <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1585487000124-1a109b8350a0?ixlib=rb-4.0.3&w=600&h=800&fit=crop'">
+        `;
+        
+        galleryGrid.appendChild(galleryItem);
+      });
+    }
+
+    // Gallery filtering
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active filter button
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const category = btn.dataset.category;
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        
+        // Filter gallery items
+        galleryItems.forEach(item => {
+          if (category === 'all' || item.dataset.category === category) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // View All button functionality
+    const viewAllBtn = document.getElementById('viewAllBtn');
+    
+    viewAllBtn.addEventListener('click', () => {
+      // Get active filter
+      const activeFilter = document.querySelector('.filter-btn.active').dataset.category;
+      
+      // Navigate to gallery page with category parameter
+      if (activeFilter === 'all') {
+        window.location.href = 'gallery.html';
+      } else {
+        window.location.href = `gallery.html?category=${activeFilter}`;
+      }
+    });
+
+    // Form submission
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Thank you for your inquiry! We will contact you shortly.');
+      this.reset();
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Initialize gallery when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      displayGalleryItems();
+    });
+  </script>
+</body>
+</html>

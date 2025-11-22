@@ -33,8 +33,8 @@ public class NewModuleController {
     }
 
     @GetMapping("/getByProjectId/{projectId}")
-    public ResponseEntity<List<NewModule>> getAllModuleByProjectId(Long id){
-        List<NewModule> allModule = service.getAllModulesByProjectId(id);
+    public ResponseEntity<List<NewModule>> getAllModuleByProjectId(Long projectId){
+        List<NewModule> allModule = service.getAllModulesByProjectId(projectId);
         return new ResponseEntity<List<NewModule>>(allModule,HttpStatus.OK);
     }
     @GetMapping("/{id}")
