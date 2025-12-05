@@ -126,7 +126,7 @@ public class ErrorRepo {
         List<Object> params = new ArrayList<>();
 
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            sql.append(" WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(client_name) LIKE ?");
+            sql.append(" WHERE LOWER(title) LIKE ? OR LOWER(priority) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(client_name) LIKE ?");
             String like = "%" + searchTerm.toLowerCase() + "%";
             params.add(like);
             params.add(like);
