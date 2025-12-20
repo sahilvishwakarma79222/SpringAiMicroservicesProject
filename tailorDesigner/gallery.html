@@ -1180,9 +1180,14 @@
   <script>
     // Configuration
     const ITEMS_PER_PAGE = 12;
+<<<<<<< HEAD
     const LOAD_DELAY = 300;
     const MAX_IMAGES_PER_CATEGORY = 50;
     const BATCH_SIZE = 5; // Check multiple images at once
+=======
+    const LOAD_DELAY = 500;
+    const MAX_IMAGES_PER_CATEGORY = 50;
+>>>>>>> 4d07b17fec3237f48bf722a9520809e4bb39e328
 
     // Folder structure configuration
     const FOLDER_STRUCTURE = {
@@ -1212,6 +1217,7 @@
       }
     };
 
+<<<<<<< HEAD
     // Check if multiple images exist in parallel
     async function checkImagesExist(urls) {
       const promises = urls.map(url => {
@@ -1221,6 +1227,15 @@
           img.onerror = () => resolve({ url, exists: false });
           img.src = url;
         });
+=======
+    // Check if an image exists
+    function checkImageExists(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+>>>>>>> 4d07b17fec3237f48bf722a9520809e4bb39e328
       });
       
       return Promise.all(promises);
@@ -1232,6 +1247,7 @@
       let id = 1;
       
       // Check each category folder for images
+<<<<<<< HEAD
       for (const [category, folderInfo] of Object.entries(FOLDER_STRUCTURE)) {
         console.log(`Checking images in ${category} folder...`);
         
@@ -1279,7 +1295,30 @@
         }
         
         console.log(`Found ${foundImages} images in ${category} folder`);
+=======
+      // Check each category folder for images
+  for (const [category, folderInfo] of Object.entries(FOLDER_STRUCTURE)) {
+    console.log(`Checking images in ${category} folder...`);
+    
+    for (let i = 1; i <= MAX_IMAGES_PER_CATEGORY; i++) {
+      const imagePath = `${folderInfo.path}${i}.webp`;
+      const exists = await checkImageExists(imagePath);
+      
+      if (exists) {
+        galleryData.push({
+          id: id++,
+          category: category,
+          title: `${folderInfo.prefix} ${i}`,
+          image: imagePath
+        });
+      } else {
+        // Stop checking this folder if image doesn't exist
+        console.log(`Found ${i-1} images in ${category} folder`);
+        break;
+>>>>>>> 4d07b17fec3237f48bf722a9520809e4bb39e328
       }
+    }
+  }
       
       console.log(`Total images found across all categories: ${galleryData.length}`);
       return galleryData;

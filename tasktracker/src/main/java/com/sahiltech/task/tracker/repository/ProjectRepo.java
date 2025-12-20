@@ -72,6 +72,7 @@ public class ProjectRepo {
 
     // ✅ Update
     public String updateProject(long id, Project project) {
+    	
         jdbcTemplate.update(SQL_UPDATE_BY_ID,
                 project.getName(),
                 project.getDescription(),
@@ -103,7 +104,7 @@ public class ProjectRepo {
         return response;
     }
 
-    // ✅ Smart Pagination (Search + Sort)
+ // ✅ Smart Pagination (Search + Sort) - CORRECTED VERSION
     public Map<String, Object> getProjectsSmartPagination(
             int pageNumber,
             int pageSize,
@@ -121,14 +122,13 @@ public class ProjectRepo {
         StringBuilder sql = new StringBuilder("SELECT * FROM projects");
         List<Object> params = new ArrayList<>();
 
-        // ✅ Search condition
+        // ✅ Search condition - FIXED
         if (searchTerm != null && !searchTerm.isEmpty()) {
             sql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ?");
             params.add("%" + searchTerm.toLowerCase() + "%");
             params.add("%" + searchTerm.toLowerCase() + "%");
             params.add("%" + searchTerm.toLowerCase() + "%");
-            params.add("%" + searchTerm.toLowerCase() + "%");
-
+            // REMOVED THE EXTRA PARAMETER
         }
 
         // ✅ Sorting
@@ -142,7 +142,7 @@ public class ProjectRepo {
 
         List<Project> projects = jdbcTemplate.query(sql.toString(), new ProjectRowMapper(), params.toArray());
 
-        // ✅ Count total for pagination
+        // ✅ Count total for pagination - ALSO FIX THIS
         StringBuilder countSql = new StringBuilder("SELECT COUNT(*) FROM projects");
         List<Object> countParams = new ArrayList<>();
         if (searchTerm != null && !searchTerm.isEmpty()) {
@@ -150,8 +150,7 @@ public class ProjectRepo {
             countParams.add("%" + searchTerm.toLowerCase() + "%");
             countParams.add("%" + searchTerm.toLowerCase() + "%");
             countParams.add("%" + searchTerm.toLowerCase() + "%");
-            countParams.add("%" + searchTerm.toLowerCase() + "%");
-
+            // REMOVED THE EXTRA PARAMETER HERE TOO
         }
 
         int totalRecords = jdbcTemplate.queryForObject(countSql.toString(), Integer.class, countParams.toArray());

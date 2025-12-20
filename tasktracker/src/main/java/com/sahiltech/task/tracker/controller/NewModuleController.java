@@ -33,7 +33,7 @@ public class NewModuleController {
     }
 
     @GetMapping("/getByProjectId/{projectId}")
-    public ResponseEntity<List<NewModule>> getAllModuleByProjectId(Long projectId){
+    public ResponseEntity<List<NewModule>> getAllModuleByProjectId(@PathVariable Long projectId){
         List<NewModule> allModule = service.getAllModulesByProjectId(projectId);
         return new ResponseEntity<List<NewModule>>(allModule,HttpStatus.OK);
     }
