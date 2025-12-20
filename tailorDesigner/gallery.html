@@ -1180,99 +1180,108 @@
   <script>
     // Configuration
     const ITEMS_PER_PAGE = 12;
-    const LOAD_DELAY = 500;
-    const MAX_IMAGES_PER_CATEGORY = 150;
+    const LOAD_DELAY = 300;
+    const MAX_IMAGES_PER_CATEGORY = 50;
+    const BATCH_SIZE = 5; // Check multiple images at once
 
-    // Folder structure configuration - UPDATED FOR ALL FOLDER
+    // Folder structure configuration
     const FOLDER_STRUCTURE = {
       'all': {
         path: 'all/',
         prefix: 'Design'
       },
       'blouse': {
-        path: 'all/',
+        path: 'blouse/',
         prefix: 'Blouse Design'
       },
       'suit': {
-        path: 'all/',
+        path: 'suit/',
         prefix: 'Suit Design'
       },
       'saree': {
-        path: 'all/',
+        path: 'saree/',
         prefix: 'Saree Design'
       },
       'lehenga': {
-        path: 'all/',
+        path: 'lehenga/',
         prefix: 'Lehenga Design'
       },
       'alteration': {
-        path: 'all/',
+        path: 'alteration/',
         prefix: 'Alteration Work'
       }
     };
 
-    // Image mapping - Define which images belong to which categories
-    // This is a sample mapping - you'll need to update this based on your actual images
-    const IMAGE_CATEGORIES = {
-      // Blouse images (example - update with your actual image numbers)
-      'blouse': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-      // Suit images (example - update with your actual image numbers)
-      'suit': [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-      // Saree images (example - update with your actual image numbers)
-      'saree': [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
-      // Lehenga images (example - update with your actual image numbers)
-      'lehenga': [31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
-      // Alteration images (example - update with your actual image numbers)
-      'alteration': [41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
-    };
-
-    // Check if an image exists
-    function checkImageExists(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = url;
+    // Check if multiple images exist in parallel
+    async function checkImagesExist(urls) {
+      const promises = urls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve({ url, exists: true });
+          img.onerror = () => resolve({ url, exists: false });
+          img.src = url;
+        });
       });
+      
+      return Promise.all(promises);
     }
 
-    // Generate gallery data dynamically by checking which images actually exist
+    // Generate gallery data with parallel image checking
     async function generateGalleryData() {
       const galleryData = [];
       let id = 1;
       
-      // First, check which images exist in the "all" folder
-      const allImages = [];
-      
-      for (let i = 1; i <= MAX_IMAGES_PER_CATEGORY; i++) {
-        const imagePath = `${FOLDER_STRUCTURE.all.path}${i}.webp`;
-        const exists = await checkImageExists(imagePath);
+      // Check each category folder for images
+      for (const [category, folderInfo] of Object.entries(FOLDER_STRUCTURE)) {
+        console.log(`Checking images in ${category} folder...`);
         
-        if (exists) {
-          // Determine category for this image
-          let category = 'all';
-          for (const [cat, images] of Object.entries(IMAGE_CATEGORIES)) {
-            if (images.includes(i)) {
-              category = cat;
-              break;
+        let batchNumber = 1;
+        let foundImages = 0;
+        
+        while (foundImages < MAX_IMAGES_PER_CATEGORY) {
+          // Create batch of image URLs to check
+          const batchUrls = [];
+          const startIndex = (batchNumber - 1) * BATCH_SIZE + 1;
+          const endIndex = Math.min(batchNumber * BATCH_SIZE, MAX_IMAGES_PER_CATEGORY);
+          
+          for (let i = startIndex; i <= endIndex; i++) {
+            batchUrls.push(`${folderInfo.path}${i}.webp`);
+          }
+          
+          // Check batch in parallel
+          const results = await checkImagesExist(batchUrls);
+          
+          let batchHasImages = false;
+          for (const result of results) {
+            if (result.exists) {
+              foundImages++;
+              galleryData.push({
+                id: id++,
+                category: category,
+                title: `${folderInfo.prefix} ${foundImages}`,
+                image: result.url
+              });
+              batchHasImages = true;
             }
           }
           
-          allImages.push({
-            id: id++,
-            category: category,
-            title: `${FOLDER_STRUCTURE.all.prefix} ${i}`,
-            image: imagePath
-          });
-        } else {
-          // Stop checking if image doesn't exist
-          break;
+          // If no images found in this batch, stop checking this folder
+          if (!batchHasImages) {
+            break;
+          }
+          
+          batchNumber++;
+          
+          // Update loading message to show progress
+          if (category === 'all') {
+            loadMoreInfo.textContent = `Loading images... (${foundImages} found so far)`;
+          }
         }
+        
+        console.log(`Found ${foundImages} images in ${category} folder`);
       }
       
-      galleryData.push(...allImages);
-      console.log(`Found ${allImages.length} images in all folder`);
-      
+      console.log(`Total images found across all categories: ${galleryData.length}`);
       return galleryData;
     }
 
@@ -1316,11 +1325,26 @@
       showLoading();
       
       // Show loading message
-      loadMoreInfo.textContent = 'Loading images...';
+      loadMoreInfo.textContent = 'Scanning for images...';
       
       try {
         // Generate gallery data by checking which images actually exist
         allGalleryData = await generateGalleryData();
+        
+        if (allGalleryData.length === 0) {
+          // If no images found, show helpful message
+          hideLoading();
+          noResults.style.display = 'block';
+          noResults.innerHTML = `
+            <h3>No images found</h3>
+            <p>Please make sure your images are in the correct folders (all/, blouse/, suit/, etc.)</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: var(--muted);">
+              Expected format: folder-name/1.webp, folder-name/2.webp, etc.
+            </p>
+          `;
+          return;
+        }
+        
         totalCount.textContent = allGalleryData.length;
         
         // Set initial filtered data to all images
@@ -1347,7 +1371,11 @@
         console.error('Error initializing gallery:', error);
         hideLoading();
         noResults.style.display = 'block';
-        noResults.innerHTML = '<h3>Error loading gallery</h3><p>Please try refreshing the page</p>';
+        noResults.innerHTML = `
+          <h3>Error loading gallery</h3>
+          <p>Please check your internet connection and try refreshing the page</p>
+          <button onclick="location.reload()" style="margin-top: 15px; padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: var(--radius); cursor: pointer;">Retry</button>
+        `;
       }
     }
 
@@ -1514,7 +1542,7 @@
         galleryItem.style.animationDelay = `${index * 0.1}s`;
         
         galleryItem.innerHTML = `
-          <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1585487000124-1a109b8350a0?ixlib=rb-4.0.3&w=600&h=800&fit=crop'">
+          <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCIgdmlld0JveD0iMCAwIDYwMCA4MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iODAwIiBmaWxsPSIjRjBGMEYwIi8+CjxwYXRoIGQ9Ik0zMDAgNDAwTDM1MCA0NTBMMzAwIDUwMEwyNTAgNDUwTDMwMCA0MDBaIiBmaWxsPSIjRDVENUQ1Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iNTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTk5OTkiPkltYWdlIG5vdCBmb3VuZDwvdGV4dD4KPC9zdmc+'">
           <div class="gallery-item-overlay">
             <div class="gallery-item-title">${item.title}</div>
             <div class="gallery-item-category">${formatCategory(item.category)}</div>
