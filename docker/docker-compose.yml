@@ -5,6 +5,36 @@ version: '3.8'
 services: 
 
 
+# admin and pass is username and password for mongo-express
+# admin@gmail.com and admin is username and password for pgadmin
+
+  # MySQL Service
+  mysql-db:
+    image: mysql:5.7
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: categorydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
+      TZ: Asia/Kolkata
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  # phpMyAdmin for MySQL
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql-db
+      PMA_USER: root
+      PMA_PASSWORD: root123
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql-db
 
 # PostgreSQL Service
   postgres-db:
