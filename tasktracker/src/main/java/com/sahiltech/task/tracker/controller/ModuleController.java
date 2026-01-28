@@ -1,6 +1,6 @@
 package com.sahiltech.task.tracker.controller;
 
-import com.sahiltech.task.tracker.model.NewModule;
+import com.sahiltech.task.tracker.model.Module;
 import com.sahiltech.task.tracker.serviceimpl.NewModuleServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class NewModuleController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<NewModule> saveModule(@RequestBody NewModule module) {
-        NewModule saved = service.saveModule(module);
+    public ResponseEntity<Module> saveModule(@RequestBody Module module) {
+        Module saved = service.saveModule(module);
         return new ResponseEntity<>(saved, HttpStatus.OK);
     }
 
@@ -33,13 +33,13 @@ public class NewModuleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NewModule> getModuleById(@PathVariable Long id) {
-        NewModule module = service.getModuleById(id);
+    public ResponseEntity<Module> getModuleById(@PathVariable Long id) {
+        Module module = service.getModuleById(id);
         return new ResponseEntity<>(module, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateModule(@PathVariable long id, @RequestBody NewModule module) {
+    public ResponseEntity<String> updateModule(@PathVariable long id, @RequestBody Module module) {
         String msg = service.updateModule(id, module);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
@@ -51,8 +51,8 @@ public class NewModuleController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<NewModule>> getAllModules() {
-        List<NewModule> modules = service.getAllModules();
+    public ResponseEntity<List<Module>> getAllModules() {
+        List<Module> modules = service.getAllModules();
         return new ResponseEntity<>(modules, HttpStatus.OK);
     }
 
