@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 public class TaskProjection {
-
     private long id;
     private String title;
     private String status;

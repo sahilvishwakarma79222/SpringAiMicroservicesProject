@@ -31,7 +31,15 @@ public class NewModuleServiceImpl {
         return moduleRepo.getAllModules();
     }
 
+<<<<<<< HEAD
     public String updateModule(Long id, Module module) {
+=======
+    public List<NewModule> getAllModulesByProjectId(Long projectid) {
+        return moduleRepo.getModuleByProjectId(projectid);
+    }
+
+    public String updateModule(Long id, NewModule module) {
+>>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
         return moduleRepo.updateModule(id, module);
     }
 

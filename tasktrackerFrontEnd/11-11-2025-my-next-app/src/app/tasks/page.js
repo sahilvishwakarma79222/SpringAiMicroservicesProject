@@ -1,22 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { 
+import {
   Card,
-  Table, 
-  Button, 
-  Modal, 
-  Form, 
-  InputGroup, 
+  Table,
+  Button,
+  Modal,
+  Form,
+  InputGroup,
   Spinner,
   Dropdown,
   Badge
 } from "react-bootstrap";
-import { 
-  FaEdit, 
-  FaEye, 
-  FaTrash, 
-  FaSort, 
-  FaSortUp, 
+import {
+  FaEdit,
+  FaEye,
+  FaTrash,
+  FaSort,
+  FaSortUp,
   FaSortDown,
   FaPlus,
   FaSearch,
@@ -30,6 +30,7 @@ import API from "@/services/api";
 export default function TasksPage() {
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [modules, setModules] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -37,7 +38,9 @@ export default function TasksPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(false);
-  
+  const [modulesLoading, setModulesLoading] = useState(false);
+  const [taskLoading, setTaskLoading] = useState(false);
+
   // Sorting State
   const [sortBy, setSortBy] = useState("id");
   const [sortDir, setSortDir] = useState("asc");
@@ -50,8 +53,10 @@ export default function TasksPage() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    status: "PENDING",
+    status: "Assigned",
+    priority: "Medium",
     projectId: "",
+    moduleId: "",
     employeeId: "",
     assignedDate: "",
     completedDate: ""
@@ -59,26 +64,28 @@ export default function TasksPage() {
   const [editId, setEditId] = useState(null);
 
   // Status Options
-  const statusOptions = ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED", "ongoing"];
+  const statusOptions = ["Assigned", "In Progress", "Completed", "Pending", "Cancelled"];
+
+  // Priority Options
+  const priorityOptions = ["High", "Medium", "Low"];
 
   // Page size options
   const pageSizeOptions = [5, 10, 20, 50];
 
-  // Color palette for status badges
-  const getStatusBadge = (status) => {
-    switch (status?.toUpperCase()) {
-      case 'COMPLETED':
-        return 'bg-success';
-      case 'IN_PROGRESS':
-      case 'ONGOING':
-        return 'bg-warning';
-      case 'PENDING':
-        return 'bg-secondary';
-      case 'CANCELLED':
-        return 'bg-danger';
-      default:
-        return 'bg-info';
-    }
+  // Status colors
+  const statusColors = {
+    "Completed": "success",
+    "In Progress": "warning",
+    "Assigned": "primary",
+    "Pending": "secondary",
+    "Cancelled": "danger"
+  };
+
+  // Priority colors
+  const priorityColors = {
+    "High": "danger",
+    "Medium": "warning",
+    "Low": "info"
   };
 
   // 🔍 Fetch All Data
@@ -93,37 +100,68 @@ export default function TasksPage() {
       setTotalRecords(res.data.totalRecords || 0);
     } catch (err) {
       console.error("Error fetching tasks:", err);
-      // Fallback to simple getAll if smart endpoint doesn't exist
-      try {
-        const res = await API.get("/task/all");
-        setTasks(res.data || []);
-        setTotalPages(1);
-        setTotalRecords(res.data?.length || 0);
-      } catch (fallbackError) {
-        console.error("Error in fallback fetch:", fallbackError);
-      }
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔍 Fetch Single Task by ID for Edit/View
+  const fetchTaskById = async (id) => {
+    setTaskLoading(true);
+    try {
+      const res = await API.get(`/task/getById/${id}`);
+      return res.data;
+    } catch (err) {
+      console.error("Error fetching task by ID:", err);
+      return null;
+    } finally {
+      setTaskLoading(false);
+    }
+  };
+
   const fetchProjects = async () => {
     try {
-      const res = await API.get("/project/getAllProjects");
-      setProjects(res.data || []);
+      const res = await API.get("/project/smart?page=1&size=100");
+      setProjects(res.data.results || res.data || []);
     } catch (err) {
       console.error("Error fetching projects:", err);
     }
   };
 
+  const fetchModules = async (projectId) => {
+    setModulesLoading(true);
+    try {
+      if (projectId) {
+        const res = await API.get(`/modules/getByProjectId/${projectId}`);
+        setModules(res.data.results || res.data || []);
+      } else {
+        setModules([]);
+      }
+    } catch (err) {
+      console.error("Error fetching modules:", err);
+      setModules([]);
+    } finally {
+      setModulesLoading(false);
+    }
+  };
+
   const fetchEmployees = async () => {
     try {
-      const res = await API.get("/employee/allEmployee");
-      setEmployees(res.data || []);
+      const res = await API.get("/employee/smart?page=1&size=100");
+      setEmployees(res.data.results || res.data || []);
     } catch (err) {
       console.error("Error fetching employees:", err);
     }
   };
+
+  // Fetch modules when project is selected
+  useEffect(() => {
+    if (formData.projectId) {
+      fetchModules(formData.projectId);
+    } else {
+      setModules([]);
+    }
+  }, [formData.projectId]);
 
   useEffect(() => {
     fetchTasks();
@@ -134,17 +172,20 @@ export default function TasksPage() {
   const handleShow = () => setShowModal(true);
   const handleClose = () => {
     setShowModal(false);
-    setFormData({ 
-      title: "", 
-      description: "", 
-      status: "PENDING", 
-      projectId: "", 
+    setFormData({
+      title: "",
+      description: "",
+      status: "Assigned",
+      priority: "Medium",
+      projectId: "",
+      moduleId: "",
       employeeId: "",
       assignedDate: "",
       completedDate: ""
     });
     setEditId(null);
     setSelectedTask(null);
+    setModules([]);
   };
 
   const handleSave = async () => {
@@ -153,10 +194,12 @@ export default function TasksPage() {
         title: formData.title,
         description: formData.description,
         status: formData.status,
+        priority: formData.priority,
         projectId: parseInt(formData.projectId),
+        moduleId: formData.moduleId ? parseInt(formData.moduleId) : null,
         employeeId: parseInt(formData.employeeId),
         assignedDate: formData.assignedDate,
-        completedDate: formData.completedDate
+        completedDate: formData.completedDate || null
       };
 
       if (editId) {
@@ -172,19 +215,47 @@ export default function TasksPage() {
     }
   };
 
-  const handleEdit = (task) => {
-    setFormData({
-      title: task.title || "",
-      description: "",
-      status: task.status || "PENDING",
-      projectId: "",
-      employeeId: "",
-      assignedDate: task.assignedDate || "",
-      completedDate: task.completedDate || ""
-    });
-    setEditId(task.id);
-    setSelectedTask(task);
-    setShowModal(true);
+  const handleEdit = async (task) => {
+    try {
+      const fullTaskData = await fetchTaskById(task.id);
+      
+      if (fullTaskData) {
+        setFormData({
+          title: fullTaskData.title || "",
+          description: fullTaskData.description || "",
+          status: fullTaskData.status || "Assigned",
+          priority: fullTaskData.priority || "Medium",
+          projectId: fullTaskData.projectId || "",
+          moduleId: fullTaskData.moduleId || "",
+          employeeId: fullTaskData.employeeId || "",
+          assignedDate: fullTaskData.assignedDate || "",
+          completedDate: fullTaskData.completedDate || ""
+        });
+        
+        // Fetch modules for the selected project
+        if (fullTaskData.projectId) {
+          fetchModules(fullTaskData.projectId);
+        }
+      } else {
+        setFormData({
+          title: task.title || "",
+          description: "",
+          status: task.status || "Assigned",
+          priority: "Medium",
+          projectId: "",
+          moduleId: "",
+          employeeId: "",
+          assignedDate: task.assignedDate || "",
+          completedDate: task.completedDate || ""
+        });
+      }
+      
+      setEditId(task.id);
+      setSelectedTask(task);
+      setShowModal(true);
+    } catch (err) {
+      console.error("Error preparing edit form:", err);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -198,9 +269,16 @@ export default function TasksPage() {
     }
   };
 
-  const handleView = (task) => {
-    setSelectedTask(task);
-    setShowViewModal(true);
+  const handleView = async (task) => {
+    try {
+      const fullTaskData = await fetchTaskById(task.id);
+      setSelectedTask(fullTaskData || task);
+      setShowViewModal(true);
+    } catch (err) {
+      console.error("Error fetching task details:", err);
+      setSelectedTask(task);
+      setShowViewModal(true);
+    }
   };
 
   const handleConfirmDelete = (task) => {
@@ -229,6 +307,39 @@ export default function TasksPage() {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString();
+  };
+
+  // Get project name by ID
+  const getProjectName = (projectId) => {
+    if (!projectId) return 'N/A';
+    const project = projects.find(p => p.id === projectId);
+    return project ? project.name : `Project #${projectId}`;
+  };
+
+  // Get module name by ID
+  const getModuleName = (moduleId) => {
+    if (!moduleId) return 'N/A';
+    const module = modules.find(m => m.id === moduleId);
+    return module ? module.name : `Module #${moduleId}`;
+  };
+
+  // Get employee name by ID
+  const getEmployeeName = (employeeId) => {
+    if (!employeeId) return 'N/A';
+    const employee = employees.find(e => e.id === employeeId);
+    return employee ? employee.name : `Employee #${employeeId}`;
+  };
+
+  // Find project ID by name (for table display mapping)
+  const getProjectIdByName = (projectName) => {
+    const project = projects.find(p => p.name === projectName);
+    return project ? project.id : null;
+  };
+
+  // Find employee ID by name (for table display mapping)
+  const getEmployeeIdByName = (employeeName) => {
+    const employee = employees.find(e => e.name === employeeName);
+    return employee ? employee.id : null;
   };
 
   // Pagination Functions
@@ -318,8 +429,8 @@ export default function TasksPage() {
               <h5 className="mb-0 text-dark fw-bold" style={{ fontSize: '1.1rem' }}>Tasks Management</h5>
               <small className="text-muted" style={{ fontSize: '0.75rem' }}>Manage your organization's tasks</small>
             </div>
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               className="d-flex align-items-center gap-2 px-3"
               onClick={handleShow}
               style={{ fontSize: '0.8rem' }}
@@ -353,8 +464,8 @@ export default function TasksPage() {
               <div className="col-md-6 d-flex justify-content-end gap-3">
                 <div className="d-flex align-items-center gap-2">
                   <span className="text-muted" style={{ fontSize: '0.8rem' }}>Show:</span>
-                  <Form.Select 
-                    value={size} 
+                  <Form.Select
+                    value={size}
                     onChange={handleSizeChange}
                     style={{ width: '70px', fontSize: '0.8rem' }}
                   >
@@ -369,7 +480,7 @@ export default function TasksPage() {
                     Filter
                   </Dropdown.Toggle>
                   <Dropdown.Menu style={{ fontSize: '0.8rem' }}>
-                    <Dropdown.Item>Pending Tasks</Dropdown.Item>
+                    <Dropdown.Item>Assigned Tasks</Dropdown.Item>
                     <Dropdown.Item>In Progress</Dropdown.Item>
                     <Dropdown.Item>Completed</Dropdown.Item>
                     <Dropdown.Divider />
@@ -385,8 +496,8 @@ export default function TasksPage() {
             <Table hover className="mb-0">
               <thead className="table-light">
                 <tr>
-                  <th 
-                    style={{ cursor: "pointer", width: "70px" }} 
+                  <th
+                    style={{ cursor: "pointer", width: "70px" }}
                     onClick={() => handleSort("id")}
                     className="py-2"
                   >
@@ -395,8 +506,8 @@ export default function TasksPage() {
                       {getSortIcon("id")}
                     </div>
                   </th>
-                  <th 
-                    style={{ cursor: "pointer", minWidth: "180px" }} 
+                  <th
+                    style={{ cursor: "pointer", minWidth: "180px" }}
                     onClick={() => handleSort("title")}
                     className="py-2"
                   >
@@ -405,8 +516,8 @@ export default function TasksPage() {
                       {getSortIcon("title")}
                     </div>
                   </th>
-                  <th 
-                    style={{ cursor: "pointer", minWidth: "100px" }} 
+                  <th
+                    style={{ cursor: "pointer", minWidth: "100px" }}
                     onClick={() => handleSort("status")}
                     className="py-2"
                   >
@@ -415,28 +526,28 @@ export default function TasksPage() {
                       {getSortIcon("status")}
                     </div>
                   </th>
-                  <th 
-                    style={{ cursor: "pointer", minWidth: "120px" }} 
-                    onClick={() => handleSort("name")}
+                  <th
+                    style={{ cursor: "pointer", minWidth: "120px" }}
+                    onClick={() => handleSort("employeeName")}
                     className="py-2"
                   >
                     <div className="d-flex align-items-center justify-content-between">
                       <span className="fw-semibold text-muted" style={{ fontSize: '0.8rem' }}>Employee</span>
-                      {getSortIcon("name")}
+                      {getSortIcon("employeeName")}
                     </div>
                   </th>
-                  <th 
-                    style={{ cursor: "pointer", minWidth: "120px" }} 
-                    onClick={() => handleSort("projectname")}
+                  <th
+                    style={{ cursor: "pointer", minWidth: "120px" }}
+                    onClick={() => handleSort("projectName")}
                     className="py-2"
                   >
                     <div className="d-flex align-items-center justify-content-between">
                       <span className="fw-semibold text-muted" style={{ fontSize: '0.8rem' }}>Project</span>
-                      {getSortIcon("projectname")}
+                      {getSortIcon("projectName")}
                     </div>
                   </th>
-                  <th 
-                    style={{ cursor: "pointer", minWidth: "110px" }} 
+                  <th
+                    style={{ cursor: "pointer", minWidth: "110px" }}
                     onClick={() => handleSort("assignedDate")}
                     className="py-2"
                   >
@@ -445,8 +556,8 @@ export default function TasksPage() {
                       {getSortIcon("assignedDate")}
                     </div>
                   </th>
-                  <th 
-                    style={{ cursor: "pointer", minWidth: "110px" }} 
+                  <th
+                    style={{ cursor: "pointer", minWidth: "110px" }}
                     onClick={() => handleSort("completedDate")}
                     className="py-2"
                   >
@@ -479,16 +590,25 @@ export default function TasksPage() {
                         <small className="text-muted" style={{ fontSize: '0.7rem' }}>Task</small>
                       </td>
                       <td className="py-2">
-                        <Badge className={getStatusBadge(t.status)} style={{ fontSize: '0.7rem' }}>
+                        <Badge 
+                          bg={statusColors[t.status] || "info"} 
+                          style={{ 
+                            fontSize: '0.7rem',
+                            backgroundColor: statusColors[t.status] ? undefined : '#17a2b8',
+                            color: 'white',
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '0.375rem'
+                          }}
+                        >
                           {t.status}
                         </Badge>
                       </td>
                       <td className="py-2">
-                        <div className="text-dark" style={{ fontSize: '0.8rem' }}>{t.name}</div>
+                        <div className="text-dark" style={{ fontSize: '0.8rem' }}>{t.employeeName}</div>
                         <small className="text-muted" style={{ fontSize: '0.7rem' }}>Employee</small>
                       </td>
                       <td className="py-2">
-                        <div className="text-dark" style={{ fontSize: '0.8rem' }}>{t.projectname}</div>
+                        <div className="text-dark" style={{ fontSize: '0.8rem' }}>{t.projectName}</div>
                         <small className="text-muted" style={{ fontSize: '0.7rem' }}>Project</small>
                       </td>
                       <td className="py-2">
@@ -524,9 +644,9 @@ export default function TasksPage() {
                             Edit
                           </Button>
                           <Dropdown>
-                            <Dropdown.Toggle 
-                              variant="outline-secondary" 
-                              size="sm" 
+                            <Dropdown.Toggle
+                              variant="outline-secondary"
+                              size="sm"
                               className="d-flex align-items-center px-1"
                               style={{ fontSize: '0.7rem' }}
                             >
@@ -578,7 +698,7 @@ export default function TasksPage() {
                     Showing <strong>{((page - 1) * size) + 1}-{Math.min(page * size, totalRecords)}</strong> of <strong>{totalRecords}</strong> tasks
                   </span>
                 </div>
-                
+
                 <div className="d-flex align-items-center gap-1">
                   <Button
                     variant="outline-secondary"
@@ -620,107 +740,166 @@ export default function TasksPage() {
           <Modal.Title style={{ fontSize: '1rem' }}>{editId ? "Edit Task" : "Add Task"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label style={{ fontSize: '0.85rem' }}>Title *</Form.Label>
-              <Form.Control
-                placeholder="Enter task title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-                style={{ fontSize: '0.85rem' }}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label style={{ fontSize: '0.85rem' }}>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="Enter task description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                style={{ fontSize: '0.85rem' }}
-              />
-            </Form.Group>
-
-            <div className="row">
-              <Form.Group className="mb-3 col-md-6">
-                <Form.Label style={{ fontSize: '0.85rem' }}>Status *</Form.Label>
-                <Form.Select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  style={{ fontSize: '0.85rem' }}
-                >
-                  {statusOptions.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-3 col-md-6">
-                <Form.Label style={{ fontSize: '0.85rem' }}>Project *</Form.Label>
-                <Form.Select
-                  value={formData.projectId}
-                  onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
-                  required
-                  style={{ fontSize: '0.85rem' }}
-                >
-                  <option value="">Select Project</option>
-                  {projects.map(project => (
-                    <option key={project.id} value={project.id}>
-                      {project.name} (ID: {project.id})
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+          {taskLoading ? (
+            <div className="text-center py-4">
+              <Spinner animation="border" variant="primary" />
+              <p className="mt-2 mb-0" style={{ fontSize: '0.85rem' }}>Loading task data...</p>
             </div>
-
-            <div className="row">
-              <Form.Group className="mb-3 col-md-6">
-                <Form.Label style={{ fontSize: '0.85rem' }}>Employee *</Form.Label>
-                <Form.Select
-                  value={formData.employeeId}
-                  onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
-                  required
-                  style={{ fontSize: '0.85rem' }}
-                >
-                  <option value="">Select Employee</option>
-                  {employees.map(employee => (
-                    <option key={employee.id} value={employee.id}>
-                      {employee.name} (ID: {employee.id})
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-3 col-md-6">
-                <Form.Label style={{ fontSize: '0.85rem' }}>Assigned Date</Form.Label>
+          ) : (
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label style={{ fontSize: '0.85rem' }}>Title *</Form.Label>
                 <Form.Control
-                  type="date"
-                  value={formData.assignedDate}
-                  onChange={(e) => setFormData({ ...formData, assignedDate: e.target.value })}
+                  placeholder="Enter task title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  required
                   style={{ fontSize: '0.85rem' }}
                 />
               </Form.Group>
-            </div>
 
-            <Form.Group className="mb-3">
-              <Form.Label style={{ fontSize: '0.85rem' }}>Completed Date</Form.Label>
-              <Form.Control
-                type="date"
-                value={formData.completedDate}
-                onChange={(e) => setFormData({ ...formData, completedDate: e.target.value })}
-                style={{ fontSize: '0.85rem' }}
-              />
-            </Form.Group>
-          </Form>
+              <Form.Group className="mb-3">
+                <Form.Label style={{ fontSize: '0.85rem' }}>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Enter task description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  style={{ fontSize: '0.85rem' }}
+                />
+              </Form.Group>
+
+              <div className="row">
+                <Form.Group className="mb-3 col-md-6">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>Status *</Form.Label>
+                  <Form.Select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                  >
+                    {statusOptions.map(status => (
+                      <option key={status} value={status}>{status}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="mb-3 col-md-6">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>Priority *</Form.Label>
+                  <Form.Select
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                  >
+                    {priorityOptions.map(priority => (
+                      <option key={priority} value={priority}>{priority}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+
+              <div className="row">
+                <Form.Group className="mb-3 col-md-6">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>Project *</Form.Label>
+                  <Form.Select
+                    value={formData.projectId}
+                    onChange={(e) => {
+                      const selectedProjectId = e.target.value;
+                      setFormData({ 
+                        ...formData, 
+                        projectId: selectedProjectId,
+                        moduleId: "" // Reset module when project changes
+                      });
+                      if (selectedProjectId) {
+                        fetchModules(selectedProjectId);
+                      }
+                    }}
+                    required
+                    style={{ fontSize: '0.85rem' }}
+                  >
+                    <option value="">Select Project</option>
+                    {projects.map(project => (
+                      <option key={project.id} value={project.id}>
+                        {project.name} 
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="mb-3 col-md-6">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>Module</Form.Label>
+                  <Form.Select
+                    value={formData.moduleId}
+                    onChange={(e) => setFormData({ ...formData, moduleId: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                    disabled={modulesLoading || !formData.projectId}
+                  >
+                    <option value="">Select Module</option>
+                    {modules.map(module => (
+                      <option key={module.id} value={module.id}>
+                        {module.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {modulesLoading && (
+                    <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                      Loading modules...
+                    </small>
+                  )}
+                  {!formData.projectId && !modulesLoading && (
+                    <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                      Please select a project first
+                    </small>
+                  )}
+                </Form.Group>
+              </div>
+
+              <div className="row">
+                <Form.Group className="mb-3 col-md-6">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>Employee *</Form.Label>
+                  <Form.Select
+                    value={formData.employeeId}
+                    onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
+                    required
+                    style={{ fontSize: '0.85rem' }}
+                  >
+                    <option value="">Select Employee</option>
+                    {employees.map(employee => (
+                      <option key={employee.id} value={employee.id}>
+                        {employee.name} 
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="mb-3 col-md-6">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>Assigned Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={formData.assignedDate}
+                    onChange={(e) => setFormData({ ...formData, assignedDate: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                />
+                </Form.Group>
+              </div>
+
+              <Form.Group className="mb-3">
+                <Form.Label style={{ fontSize: '0.85rem' }}>Completed Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={formData.completedDate}
+                  onChange={(e) => setFormData({ ...formData, completedDate: e.target.value })}
+                  style={{ fontSize: '0.85rem' }}
+                />
+              </Form.Group>
+            </Form>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={handleClose} style={{ fontSize: '0.8rem' }}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSave} style={{ fontSize: '0.8rem' }}>
+          <Button variant="primary" onClick={handleSave} disabled={taskLoading} style={{ fontSize: '0.8rem' }}>
             {editId ? "Update Task" : "Add Task"}
           </Button>
         </Modal.Footer>
@@ -732,10 +911,24 @@ export default function TasksPage() {
           <Modal.Title style={{ fontSize: '1rem' }}>Task Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedTask && (
+          {taskLoading ? (
+            <div className="text-center py-4">
+              <Spinner animation="border" variant="primary" />
+              <p className="mt-2 mb-0" style={{ fontSize: '0.85rem' }}>Loading task details...</p>
+            </div>
+          ) : selectedTask ? (
             <div>
               <div className="mb-3">
-                <Badge className={getStatusBadge(selectedTask.status)} style={{ fontSize: '0.8rem' }}>
+                <Badge 
+                  bg={statusColors[selectedTask.status] || "info"} 
+                  style={{ 
+                    fontSize: '0.8rem',
+                    backgroundColor: statusColors[selectedTask.status] ? undefined : '#17a2b8',
+                    color: 'white',
+                    padding: '0.35rem 0.65rem',
+                    borderRadius: '0.375rem'
+                  }}
+                >
                   {selectedTask.status}
                 </Badge>
               </div>
@@ -746,10 +939,13 @@ export default function TasksPage() {
                 <strong>Title:</strong> {selectedTask.title}
               </div>
               <div className="mb-2" style={{ fontSize: '0.85rem' }}>
-                <strong>Employee:</strong> {selectedTask.name}
+                <strong>Description:</strong> {selectedTask.description || 'N/A'}
               </div>
               <div className="mb-2" style={{ fontSize: '0.85rem' }}>
-                <strong>Project:</strong> {selectedTask.projectname}
+                <strong>Employee:</strong> {selectedTask.employeeName || getEmployeeName(selectedTask.employeeId)}
+              </div>
+              <div className="mb-2" style={{ fontSize: '0.85rem' }}>
+                <strong>Project:</strong> {selectedTask.projectName || getProjectName(selectedTask.projectId)}
               </div>
               <div className="mb-2" style={{ fontSize: '0.85rem' }}>
                 <strong>Assigned Date:</strong> {formatDate(selectedTask.assignedDate)}
@@ -757,6 +953,20 @@ export default function TasksPage() {
               <div className="mb-2" style={{ fontSize: '0.85rem' }}>
                 <strong>Completed Date:</strong> {formatDate(selectedTask.completedDate)}
               </div>
+              {selectedTask.priority && (
+                <div className="mb-2" style={{ fontSize: '0.85rem' }}>
+                  <strong>Priority:</strong> {selectedTask.priority}
+                </div>
+              )}
+              {selectedTask.moduleId && (
+                <div className="mb-2" style={{ fontSize: '0.85rem' }}>
+                  <strong>Module:</strong> {getModuleName(selectedTask.moduleId)}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center text-muted">
+              <p style={{ fontSize: '0.85rem' }}>No task data available</p>
             </div>
           )}
         </Modal.Body>
@@ -777,7 +987,16 @@ export default function TasksPage() {
             <div className="text-center">
               <div className="mb-3">
                 <h6 className="mb-1" style={{ fontSize: '0.9rem' }}>{selectedTask.title}</h6>
-                <Badge className={getStatusBadge(selectedTask.status)} style={{ fontSize: '0.7rem' }}>
+                <Badge 
+                  bg={statusColors[selectedTask.status] || "info"} 
+                  style={{ 
+                    fontSize: '0.7rem',
+                    backgroundColor: statusColors[selectedTask.status] ? undefined : '#17a2b8',
+                    color: 'white',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '0.375rem'
+                  }}
+                >
                   {selectedTask.status}
                 </Badge>
               </div>

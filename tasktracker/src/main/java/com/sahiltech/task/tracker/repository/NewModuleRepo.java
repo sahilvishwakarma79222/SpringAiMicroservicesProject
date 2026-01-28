@@ -1,7 +1,13 @@
 package com.sahiltech.task.tracker.repository;
 
+<<<<<<< HEAD
 import com.sahiltech.task.tracker.dto.ModuleRowMapper;
 import com.sahiltech.task.tracker.model.Module;
+=======
+import com.sahiltech.task.tracker.dto.NewModuleRowMapper;
+import com.sahiltech.task.tracker.model.NewModule;
+import org.springframework.dao.EmptyResultDataAccessException;
+>>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,6 +21,7 @@ import java.util.*;
 @Repository
 public class NewModuleRepo {
 
+
     private final JdbcTemplate jdbcTemplate;
 
     public NewModuleRepo(JdbcTemplate jdbcTemplate) {
@@ -26,6 +33,7 @@ public class NewModuleRepo {
         INSERT INTO modules(name, description, status, priority, client_name, project_id, start_date, completed_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """;
+<<<<<<< HEAD
 
     private final String sqlGetById = "SELECT * FROM modules WHERE id = ?";
     private final String sqlDeleteById = "DELETE FROM modules WHERE id = ?";
@@ -36,12 +44,36 @@ public class NewModuleRepo {
     """;
     private final String sqlGetAll = "SELECT * FROM modules";
     private final String sqlGetAllCount = "SELECT COUNT(*) FROM modules";
+=======
+>>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
 
+    private final String sqlGetById = "SELECT * FROM modules WHERE id = ?";
+    private final String sqlDeleteById = "DELETE FROM modules WHERE id = ?";
+    private final String sqlUpdateById = """
+        UPDATE modules 
+        SET name=?, description=?, status=?, priority=?, client_name=?, project_id=?, start_date=?, completed_date=? 
+        WHERE id=?
+    """;
+    private final String sqlGetAll = "SELECT * FROM modules";
+    private final String sqlGetAllCount = "SELECT COUNT(*) FROM modules";
+    private static final String SQL_GET_BY_PROJECTID="SELECT * FROM modules where project_id=?";
 
+    //get by project Id
+    public List<NewModule> getModuleByProjectId(Long projectId){
+        List<NewModule> modules = jdbcTemplate.query(SQL_GET_BY_PROJECTID, new NewModuleRowMapper(), projectId);
+        return  modules;
+    }
+    //  savve
+    public NewModule saveModule(NewModule module) {
+        if (module == null) return null;
+
+<<<<<<< HEAD
     // ✅ CREATE (with null safety)
     public Module saveModule(Module module) {
         if (module == null) return null;
 
+=======
+>>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -64,10 +96,17 @@ public class NewModuleRepo {
     }
 
     // ✅ READ BY ID (null-safe)
+<<<<<<< HEAD
     public Module getById(Long id) {
         if (id == null) return null;
         try {
             return jdbcTemplate.queryForObject(sqlGetById, new ModuleRowMapper(), id);
+=======
+    public NewModule getById(Long id) {
+        if (id == null) return null;
+        try {
+            return jdbcTemplate.queryForObject(sqlGetById, new NewModuleRowMapper(), id);
+>>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -81,7 +120,11 @@ public class NewModuleRepo {
     }
 
     // ✅ UPDATE
+<<<<<<< HEAD
     public String updateModule(Long id, Module module) {
+=======
+    public String updateModule(Long id, NewModule module) {
+>>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
         if (id == null || module == null) return "Invalid data";
 
         int rows = jdbcTemplate.update(sqlUpdateById,

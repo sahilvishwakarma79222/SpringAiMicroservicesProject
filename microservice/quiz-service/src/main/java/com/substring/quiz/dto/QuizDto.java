@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Getter
 public class QuizDto {
 
-    private  String id;
+
 
     private  String title;
     private  String description;

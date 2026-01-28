@@ -19,6 +19,12 @@ public class ErrorRowMapper implements RowMapper<Errors> {
         error.setPriority(rs.getString("priority"));
         error.setClientName(rs.getString("client_name"));
         error.setProjectId(rs.getLong("project_id"));
+<<<<<<< HEAD
+=======
+        error.setModuleId(rs.getObject("module_id") != null ? rs.getLong("module_id") : null);
+        error.setReportedBy(rs.getObject("reported_by") != null ? rs.getLong("reported_by") : null);
+        error.setAssignedTo(rs.getObject("assigned_to") != null ? rs.getLong("assigned_to") : null);
+>>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
         error.setErrorDate(rs.getDate("error_date") != null ? rs.getDate("error_date").toLocalDate() : null);
         error.setSolvedDate(rs.getDate("solved_date") != null ? rs.getDate("solved_date").toLocalDate() : null);
         return error;
