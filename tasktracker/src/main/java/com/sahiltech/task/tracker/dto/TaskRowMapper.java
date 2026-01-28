@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class TaskRoeMapper implements RowMapper<Task> {
+public class TaskRowMapper implements RowMapper<Task> {
 
 
     @Override

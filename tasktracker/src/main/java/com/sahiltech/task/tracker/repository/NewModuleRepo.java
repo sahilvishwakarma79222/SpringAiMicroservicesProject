@@ -1,18 +1,16 @@
 package com.sahiltech.task.tracker.repository;
 
-import com.sahiltech.task.tracker.dto.NewModuleRowMapper;
-import com.sahiltech.task.tracker.model.NewModule;
+import com.sahiltech.task.tracker.dto.ModuleRowMapper;
+import com.sahiltech.task.tracker.model.Module;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class NewModuleRepo {
@@ -23,28 +21,39 @@ public class NewModuleRepo {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // 🔹 SQL Queries
-    private final String sqlCreate = "INSERT INTO newmodule(modulename, description, priority, status, clientName,project_id, moduledate) VALUES (?, ?,?, ?, ?, ?, ?)";
-    private final String sqlGetById = "SELECT * FROM newmodule WHERE id = ?";
-    private final String sqlDeleteById = "DELETE FROM newmodule WHERE id = ?";
-    private final String sqlUpdateById = "UPDATE newmodule SET modulename=?, description=?, priority=?, status=?, clientname=?, moduledate=? ,project_id=? WHERE id=?";
-    private final String sqlGetAll = "SELECT * FROM newmodule";
-    private final String sqlGetAllCount = "SELECT COUNT(*) FROM newmodule";
+    // ✅ Corrected SQL Queries
+    private final String sqlCreate = """
+        INSERT INTO modules(name, description, status, priority, client_name, project_id, start_date, completed_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """;
+
+    private final String sqlGetById = "SELECT * FROM modules WHERE id = ?";
+    private final String sqlDeleteById = "DELETE FROM modules WHERE id = ?";
+    private final String sqlUpdateById = """
+        UPDATE modules 
+        SET name=?, description=?, status=?, priority=?, client_name=?, project_id=?, start_date=?, completed_date=? 
+        WHERE id=?
+    """;
+    private final String sqlGetAll = "SELECT * FROM modules";
+    private final String sqlGetAllCount = "SELECT COUNT(*) FROM modules";
 
 
-     public NewModule saveModule(NewModule module) {
+    // ✅ CREATE (with null safety)
+    public Module saveModule(Module module) {
+        if (module == null) return null;
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, module.getModulename());
+            ps.setString(1, module.getName());
             ps.setString(2, module.getDescription());
-            ps.setString(3, module.getPriority());
-            ps.setString(4, module.getStatus());
+            ps.setString(3, module.getStatus());
+            ps.setString(4, module.getPriority());
             ps.setString(5, module.getClientName());
-            ps.setLong(6,module.getProject_id());
-            ps.setObject(7, module.getModuledate());
-
+            ps.setObject(6, module.getProjectId());
+            ps.setObject(7, module.getStartDate());
+            ps.setObject(8, module.getCompletedDate());
             return ps;
         }, keyHolder);
 
@@ -54,67 +63,73 @@ public class NewModuleRepo {
         return module;
     }
 
-
-     public NewModule getById(Long id) {
-        return jdbcTemplate.queryForObject(sqlGetById, new NewModuleRowMapper(), id);
+    // ✅ READ BY ID (null-safe)
+    public Module getById(Long id) {
+        if (id == null) return null;
+        try {
+            return jdbcTemplate.queryForObject(sqlGetById, new ModuleRowMapper(), id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
-
-     public String deleteModule(long id) {
-        jdbcTemplate.update(sqlDeleteById, id);
-        return "Module deleted successfully with id " + id;
+    // ✅ DELETE
+    public String deleteModule(Long id) {
+        if (id == null) return "Invalid ID";
+        int rows = jdbcTemplate.update(sqlDeleteById, id);
+        return rows > 0 ? "Module deleted successfully with id " + id : "No module found with id " + id;
     }
-
 
     // ✅ UPDATE
-    public String updateModule(long id, NewModule module) {
-        jdbcTemplate.update(sqlUpdateById,
-                module.getModulename(),
+    public String updateModule(Long id, Module module) {
+        if (id == null || module == null) return "Invalid data";
+
+        int rows = jdbcTemplate.update(sqlUpdateById,
+                module.getName(),
                 module.getDescription(),
-                module.getPriority(),
                 module.getStatus(),
+                module.getPriority(),
                 module.getClientName(),
-                module.getModuledate(),
-                module.getProject_id(),
+                module.getProjectId(),
+                module.getStartDate(),
+                module.getCompletedDate(),
                 id
         );
-        return "Module updated successfully with id " + id;
+        return rows > 0 ? "Module updated successfully with id " + id : "No module found with id " + id;
     }
-
 
     // ✅ GET ALL
-    public List<NewModule> getAllModules() {
-        return jdbcTemplate.query(sqlGetAll, new NewModuleRowMapper());
+    public List<Module> getAllModules() {
+        return jdbcTemplate.query(sqlGetAll, new ModuleRowMapper());
     }
-
 
     // ✅ COUNT ALL
     public int countAllModules() {
-        return jdbcTemplate.queryForObject(sqlGetAllCount, Integer.class);
+        Integer count = jdbcTemplate.queryForObject(sqlGetAllCount, Integer.class);
+        return count != null ? count : 0;
     }
 
-
-    // ✅ SMART PAGINATION + SEARCH + SORT
+    // ✅ SMART PAGINATION + SEARCH + SORT + NULL SAFE
     public Map<String, Object> getModulesSmartPagination(
-            int pageNumber,
-            int pageSize,
+            Integer pageNumber,
+            Integer pageSize,
             String sortBy,
             String sortDir,
             String searchTerm
     ) {
         if (sortBy == null || sortBy.isEmpty()) sortBy = "id";
         if (sortDir == null || sortDir.isEmpty()) sortDir = "asc";
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 10;
+        if (pageNumber == null || pageNumber < 1) pageNumber = 1;
+        if (pageSize == null || pageSize < 1) pageSize = 10;
 
         int offset = (pageNumber - 1) * pageSize;
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM new_module");
+        StringBuilder sql = new StringBuilder("SELECT * FROM modules");
         List<Object> params = new ArrayList<>();
 
         // ✅ Search condition
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            sql.append(" WHERE LOWER(modulename) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(clientname) LIKE ?");
+            sql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(client_name) LIKE ?");
             String like = "%" + searchTerm.toLowerCase() + "%";
             params.add(like);
             params.add(like);
@@ -123,20 +138,21 @@ public class NewModuleRepo {
         }
 
         // ✅ Sorting
-        sql.append(" ORDER BY ").append(sortBy).append(" ").append(sortDir.equalsIgnoreCase("desc") ? "DESC" : "ASC");
+        sql.append(" ORDER BY ").append(sortBy).append(" ")
+                .append(sortDir.equalsIgnoreCase("desc") ? "DESC" : "ASC");
 
         // ✅ Pagination
         sql.append(" LIMIT ? OFFSET ?");
         params.add(pageSize);
         params.add(offset);
 
-        List<NewModule> modules = jdbcTemplate.query(sql.toString(), new NewModuleRowMapper(), params.toArray());
+        List<Module> modules = jdbcTemplate.query(sql.toString(), new ModuleRowMapper(), params.toArray());
 
         // ✅ Count total records
-        StringBuilder countSql = new StringBuilder("SELECT COUNT(*) FROM new_module");
+        StringBuilder countSql = new StringBuilder("SELECT COUNT(*) FROM modules");
         List<Object> countParams = new ArrayList<>();
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            countSql.append(" WHERE LOWER(modulename) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(clientname) LIKE ?");
+            countSql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(client_name) LIKE ?");
             String like = "%" + searchTerm.toLowerCase() + "%";
             countParams.add(like);
             countParams.add(like);
@@ -144,11 +160,12 @@ public class NewModuleRepo {
             countParams.add(like);
         }
 
-        int totalRecords = jdbcTemplate.queryForObject(countSql.toString(), Integer.class, countParams.toArray());
+        Integer totalRecordsObj = jdbcTemplate.queryForObject(countSql.toString(), Integer.class, countParams.toArray());
+        int totalRecords = totalRecordsObj != null ? totalRecordsObj : 0;
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         Map<String, Object> result = new LinkedHashMap<>();
-        result.put("results", modules);
+        result.put("results", modules != null ? modules : Collections.emptyList());
         result.put("totalRecords", totalRecords);
         result.put("totalPages", totalPages);
         result.put("currentPage", pageNumber);
@@ -159,5 +176,4 @@ public class NewModuleRepo {
 
         return result;
     }
-
 }

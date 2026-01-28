@@ -12,11 +12,11 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1/modules")
-public class NewModuleController {
+public class ModuleController {
 
     private final NewModuleServiceImpl service;
 
-    public NewModuleController(NewModuleServiceImpl service) {
+    public ModuleController(NewModuleServiceImpl service) {
         this.service = service;
     }
 

@@ -1,6 +1,6 @@
 package com.sahiltech.task.tracker.serviceimpl;
 
-import com.sahiltech.task.tracker.model.NewModule;
+import com.sahiltech.task.tracker.model.Module;
 import com.sahiltech.task.tracker.repository.NewModuleRepo;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +19,19 @@ public class NewModuleServiceImpl {
         return moduleRepo.countAllModules();
     }
 
-    public NewModule saveModule(NewModule module) {
+    public Module saveModule(Module module) {
         return moduleRepo.saveModule(module);
     }
 
-    public NewModule getModuleById(Long id) {
+    public Module getModuleById(Long id) {
         return moduleRepo.getById(id);
     }
 
-    public List<NewModule> getAllModules() {
+    public List<Module> getAllModules() {
         return moduleRepo.getAllModules();
     }
 
-    public String updateModule(Long id, NewModule module) {
+    public String updateModule(Long id, Module module) {
         return moduleRepo.updateModule(id, module);
     }
 

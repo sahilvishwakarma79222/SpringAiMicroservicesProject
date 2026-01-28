@@ -19,32 +19,41 @@ import java.util.Map;
 public class ErrorRepo {
 
     private final JdbcTemplate jdbcTemplate;
-    public ErrorRepo(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+
+    public ErrorRepo(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    private String sqlCreate="insert into errors(title,description,status,project_id,error_date,solved,priority,clientname) values(?,?,?,?,?,?,?,?)";
-    private String sqlGetById="select * from errors where errors.id=?";
-    private String sqlDeleteById="delete from errors where errors.id=?";
-    private String sqlUpdateById="update errors set title=?,description=?,status=?,project_id=?," +
-            " error_date=?,solved=?,priority=?,clientname=? where id=?";
-    private String sqlGetAll = "SELECT * FROM errors";
-    private String sqlGetAllCount = "SELECT count(*) FROM errors";
+    private static final String SQL_INSERT = """
+        INSERT INTO errors (title, description, status, priority, client_name, project_id, error_date, solved_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """;
+
+    private static final String SQL_GET_BY_ID = "SELECT * FROM errors WHERE id = ?";
+    private static final String SQL_DELETE_BY_ID = "DELETE FROM errors WHERE id = ?";
+    private static final String SQL_UPDATE_BY_ID = """
+        UPDATE errors
+        SET title = ?, description = ?, status = ?, priority = ?, client_name = ?, project_id = ?, error_date = ?, solved_date = ?
+        WHERE id = ?
+    """;
+    private static final String SQL_GET_ALL = "SELECT * FROM errors";
+    private static final String SQL_COUNT_ALL = "SELECT COUNT(*) FROM errors";
+
 
     // ✅ CREATE
     public Errors saveError(Errors error) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, error.getTitle());
             ps.setString(2, error.getDescription());
             ps.setString(3, error.getStatus());
-            ps.setLong(4, error.getProjectId());
-            ps.setObject(5, error.getErrordate());
-            ps.setObject(6, error.getSolved());
-            ps.setString(7, error.getPriority());
-            ps.setString(8, error.getClientName());
+            ps.setString(4, error.getPriority());
+            ps.setString(5, error.getClientName());
+            ps.setLong(6, error.getProjectId());
+            ps.setObject(7, error.getErrorDate());
+            ps.setObject(8, error.getSolvedDate());
             return ps;
         }, keyHolder);
 
@@ -55,45 +64,45 @@ public class ErrorRepo {
     }
 
 
-    // ✅ READ (by ID)
+    // ✅ READ BY ID
     public Errors getById(Long id) {
-        return jdbcTemplate.queryForObject(sqlGetById, new ErrorRowMapper(), id);
-    }
-
-
-    // ✅ DELETE
-    public String deleteError(long id) {
-        jdbcTemplate.update(sqlDeleteById, id);
-        return "Error deleted successfully with id " + id;
+        return jdbcTemplate.queryForObject(SQL_GET_BY_ID, new ErrorRowMapper(), id);
     }
 
 
     // ✅ UPDATE
     public String updateError(long id, Errors error) {
-        jdbcTemplate.update(sqlUpdateById,
+        jdbcTemplate.update(SQL_UPDATE_BY_ID,
                 error.getTitle(),
                 error.getDescription(),
                 error.getStatus(),
-                error.getProjectId(),
-                error.getErrordate(),
-                error.getSolved(),
                 error.getPriority(),
                 error.getClientName(),
+                error.getProjectId(),
+                error.getErrorDate(),
+                error.getSolvedDate(),
                 id
         );
         return "Error updated successfully with id " + id;
     }
 
 
+    // ✅ DELETE
+    public String deleteError(long id) {
+        jdbcTemplate.update(SQL_DELETE_BY_ID, id);
+        return "Error deleted successfully with id " + id;
+    }
+
+
     // ✅ GET ALL
     public List<Errors> getAllErrors() {
-        return jdbcTemplate.query(sqlGetAll, new ErrorRowMapper());
+        return jdbcTemplate.query(SQL_GET_ALL, new ErrorRowMapper());
     }
 
 
     // ✅ COUNT ALL
     public int countAllErrors() {
-        return jdbcTemplate.queryForObject(sqlGetAllCount, Integer.class);
+        return jdbcTemplate.queryForObject(SQL_COUNT_ALL, Integer.class);
     }
 
 
@@ -162,7 +171,4 @@ public class ErrorRepo {
 
         return result;
     }
-
-
-
 }

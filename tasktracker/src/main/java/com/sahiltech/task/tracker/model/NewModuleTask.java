@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 public class NewModuleTask {
-
+// not needed
     private long id;
     private String title;
     private String description;

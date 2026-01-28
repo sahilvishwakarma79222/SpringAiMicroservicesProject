@@ -20,18 +20,18 @@ public class TaskServiceImpl {
     }
 
     public List<Task> getAllTask(){
-        return taskRepo.getAllTask();
+        return taskRepo.getAllTasks();
     }
 
     public Task getByIdTask(Long id){
         return taskRepo.getById(id);
     }
 
-    public Task getByIdEmployeeId(Long id){
+    public List<Task> getByIdEmployeeId(Long id){
         return taskRepo.getByEmployeeId(id);
     }
 
-    public Task getByIdProjectId(Long id){
+    public List<Task> getByIdProjectId(Long id){
         return taskRepo.getByProjectId(id);
     }
 
@@ -51,7 +51,7 @@ public class TaskServiceImpl {
             String sortDir,
             String search
     ) {
-        return taskRepo.getProjectsSmartPagination(page, size, sortBy, sortDir, search);
+        return taskRepo.getTasksSmartPagination(page, size, sortBy, sortDir, search);
     }
 
 }

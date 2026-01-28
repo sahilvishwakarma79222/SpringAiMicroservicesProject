@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class NewModule {
+public class Module {
 
     private long id;
     private String name;               // ✅ renamed

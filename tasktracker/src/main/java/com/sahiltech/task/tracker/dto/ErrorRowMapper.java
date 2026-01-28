@@ -11,21 +11,17 @@ public class ErrorRowMapper implements RowMapper<Errors> {
 
     @Override
     public Errors mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Errors error=new Errors();
+        Errors error = new Errors();
         error.setId(rs.getLong("id"));
-        error.setStatus(rs.getString("status"));
-        error.setDescription(rs.getString("description"));
-        error.setProjectId(rs.getLong("project_id"));
         error.setTitle(rs.getString("title"));
+        error.setDescription(rs.getString("description"));
+        error.setStatus(rs.getString("status"));
         error.setPriority(rs.getString("priority"));
-        error.setClientName((rs.getString("clientname")));
-
-        error.setErrordate(
-                rs.getDate("error_date") != null ? rs.getDate("error_date").toLocalDate() : null
-        );
-        error.setSolved(
-                rs.getDate("solved") != null ? rs.getDate("solved").toLocalDate() : null
-        );
+        error.setClientName(rs.getString("client_name"));
+        error.setProjectId(rs.getLong("project_id"));
+        error.setErrorDate(rs.getDate("error_date") != null ? rs.getDate("error_date").toLocalDate() : null);
+        error.setSolvedDate(rs.getDate("solved_date") != null ? rs.getDate("solved_date").toLocalDate() : null);
         return error;
+
     }
 }

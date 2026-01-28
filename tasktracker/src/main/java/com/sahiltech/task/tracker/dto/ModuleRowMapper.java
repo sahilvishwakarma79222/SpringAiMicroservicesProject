@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class NewModuleRowMapper implements RowMapper<Module> {
+public class ModuleRowMapper implements RowMapper<Module> {
 
 
     @Override

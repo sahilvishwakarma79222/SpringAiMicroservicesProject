@@ -33,12 +33,12 @@ public ResponseEntity<Task> saveTask(@RequestBody Task task){
     }
 
     @GetMapping("/getByEmployeeId/{id}")
-    public ResponseEntity<Task> getByEmpId(@PathVariable Long id){
+    public ResponseEntity<List<Task>> getByEmpId(@PathVariable Long id){
         return new ResponseEntity<>(service.getByIdEmployeeId(id),HttpStatus.OK);
     }
 
     @GetMapping("/getByProjectId/{id}")
-    public ResponseEntity<Task> getByProjectId(@PathVariable Long id){
+    public ResponseEntity<List<Task>> getByProjectId(@PathVariable Long id){
         return new ResponseEntity<>(service.getByIdProjectId(id),HttpStatus.OK);
     }
 

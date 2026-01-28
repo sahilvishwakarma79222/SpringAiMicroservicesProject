@@ -15,9 +15,10 @@ public class Errors {
     private String title;
     private String description;
     private String status;
-    private LocalDate errordate;
-    private LocalDate solved;
-    private long projectId;
     private String priority;
     private String clientName;
+    private long projectId;
+
+    private LocalDate errorDate;
+    private LocalDate solvedDate;
 }
