@@ -15,14 +15,11 @@ public class TaskProjectionMapper implements RowMapper<TaskProjection> {
         projection.setId(rs.getLong("id"));
         projection.setTitle(rs.getString("title"));
         projection.setStatus(rs.getString("status"));
-<<<<<<< HEAD
-        projection.setEmployeeName(rs.getString("employeeName")); // ✅ correct alias
+         projection.setEmployeeName(rs.getString("employeeName")); // ✅ correct alias
         projection.setProjectName(rs.getString("projectName"));   // ✅ correct alias
-=======
-        projection.setEmployeeName(rs.getString("employeeName"));
+         projection.setEmployeeName(rs.getString("employeeName"));
         projection.setProjectName(rs.getString("projectName"));
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
-
+ 
         projection.setAssignedDate(
                 rs.getDate("assigned_date") != null ? rs.getDate("assigned_date").toLocalDate() : null
         );
@@ -30,11 +27,8 @@ public class TaskProjectionMapper implements RowMapper<TaskProjection> {
                 rs.getDate("completed_date") != null ? rs.getDate("completed_date").toLocalDate() : null
         );
         return projection;
-<<<<<<< HEAD
-=======
-    }
+     }
 
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
-    }
+     }
 
 

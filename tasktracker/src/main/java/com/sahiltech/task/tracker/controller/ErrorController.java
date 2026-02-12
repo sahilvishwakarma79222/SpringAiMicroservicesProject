@@ -33,19 +33,22 @@ public class ErrorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Errors> getErrorById(@PathVariable Long id) {
+    public ResponseEntity<Errors> getErrorById(@PathVariable("id") Long id) {
         Errors error = service.getErrorById(id);
         return new ResponseEntity<>(error, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateError(@PathVariable long id, @RequestBody Errors error) {
+    public ResponseEntity<String> updateError(
+            @PathVariable("id") Long id,
+            @RequestBody Errors error) {
+
         String msg = service.updateError(id, error);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteError(@PathVariable long id) {
+    public ResponseEntity<String> deleteError(@PathVariable("id") Long id) {
         String msg = service.deleteError(id);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
@@ -58,13 +61,15 @@ public class ErrorController {
 
     @GetMapping("/smart")
     public ResponseEntity<Map<String, Object>> getSmartPaginatedErrors(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String search
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
+            @RequestParam(name = "search", required = false) String search
     ) {
-        Map<String, Object> response = service.getSmartPaginatedErrors(page, size, sortBy, sortDir, search);
+        Map<String, Object> response =
+                service.getSmartPaginatedErrors(page, size, sortBy, sortDir, search);
+
         return ResponseEntity.ok(response);
     }
 }

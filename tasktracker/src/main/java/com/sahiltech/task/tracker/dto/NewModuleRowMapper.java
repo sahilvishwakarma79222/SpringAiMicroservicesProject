@@ -1,18 +1,17 @@
 package com.sahiltech.task.tracker.dto;
 
 import com.sahiltech.task.tracker.model.Errors;
-import com.sahiltech.task.tracker.model.NewModule;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class NewModuleRowMapper implements RowMapper<NewModule> {
+public class NewModuleRowMapper implements RowMapper<com.sahiltech.task.tracker.model.Module> {
 
 
     @Override
-    public NewModule mapRow(ResultSet rs, int rowNum) throws SQLException {
-        NewModule module = new NewModule();
+    public com.sahiltech.task.tracker.model.Module mapRow(ResultSet rs, int rowNum) throws SQLException {
+    	com.sahiltech.task.tracker.model.Module module = new com.sahiltech.task.tracker.model.Module();
         module.setId(rs.getLong("id"));
         module.setName(rs.getString("name"));
         module.setDescription(rs.getString("description"));

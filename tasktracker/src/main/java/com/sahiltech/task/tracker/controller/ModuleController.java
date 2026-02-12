@@ -33,24 +33,34 @@ public class ModuleController {
     }
 
     @GetMapping("/getByProjectId/{projectId}")
-    public ResponseEntity<List<NewModule>> getAllModuleByProjectId(@PathVariable Long projectId){
-        List<NewModule> allModule = service.getAllModulesByProjectId(projectId);
-        return new ResponseEntity<List<NewModule>>(allModule,HttpStatus.OK);
+    public ResponseEntity<List<Module>> getAllModuleByProjectId(
+            @PathVariable("projectId") Long projectId) {
+
+        List<Module> allModule = service.getAllModulesByProjectId(projectId);
+        return new ResponseEntity<>(allModule, HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Module> getModuleById(@PathVariable Long id) {
+    public ResponseEntity<Module> getModuleById(
+            @PathVariable("id") Long id) {
+
         Module module = service.getModuleById(id);
         return new ResponseEntity<>(module, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateModule(@PathVariable long id, @RequestBody Module module) {
+    public ResponseEntity<String> updateModule(
+            @PathVariable("id") Long id,
+            @RequestBody Module module) {
+
         String msg = service.updateModule(id, module);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteModule(@PathVariable long id) {
+    public ResponseEntity<String> deleteModule(
+            @PathVariable("id") Long id) {
+
         String msg = service.deleteModule(id);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
@@ -63,13 +73,15 @@ public class ModuleController {
 
     @GetMapping("/smart")
     public ResponseEntity<Map<String, Object>> getSmartPaginatedModules(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String search
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
+            @RequestParam(name = "search", required = false) String search
     ) {
-        Map<String, Object> response = service.getSmartPaginatedModules(page, size, sortBy, sortDir, search);
+        Map<String, Object> response =
+                service.getSmartPaginatedModules(page, size, sortBy, sortDir, search);
+
         return ResponseEntity.ok(response);
     }
 }
