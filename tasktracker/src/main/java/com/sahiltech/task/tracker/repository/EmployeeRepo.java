@@ -96,7 +96,7 @@ public class EmployeeRepo {
         StringBuilder sql = new StringBuilder("SELECT * FROM employees");
         List<Object> params = new ArrayList<>();
 
-        // ✅ Search condition
+        // Search condition
         if (searchTerm != null && !searchTerm.isEmpty()) {
             sql.append(" WHERE LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR LOWER(department) Like ?");
             params.add("%" + searchTerm.toLowerCase() + "%");
@@ -104,17 +104,17 @@ public class EmployeeRepo {
             params.add("%" + searchTerm.toLowerCase() + "%");
         }
 
-        // ✅ Sorting
+        //  Sorting
         sql.append(" ORDER BY ").append(sortBy).append(" ").append(sortDir.equalsIgnoreCase("desc") ? "DESC" : "ASC");
 
-        // ✅ Pagination
+        //  Pagination
         sql.append(" LIMIT ? OFFSET ?");
         params.add(pageSize);
         params.add(offset);
 
         List<Employee> employees = jdbcTemplate.query(sql.toString(), new EmployeRowMapper(), params.toArray());
 
-        // ✅ Count total records for page calculation
+        //  Count total records for page calculation
         StringBuilder countSql = new StringBuilder("SELECT COUNT(*) FROM employees");
         List<Object> countParams = new ArrayList<>();
         if (searchTerm != null && !searchTerm.isEmpty()) {

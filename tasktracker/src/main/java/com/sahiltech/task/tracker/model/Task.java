@@ -18,7 +18,7 @@ public class Task {
       private long projectId;
     private Long moduleId;
     private long employeeId;
-     private Long errorId;       // ✅ Link to Errors (can be null)
+     private Long errorId;       //  Link to Errors (can be null)
     private LocalDate assignedDate;
     private LocalDate completedDate;
 

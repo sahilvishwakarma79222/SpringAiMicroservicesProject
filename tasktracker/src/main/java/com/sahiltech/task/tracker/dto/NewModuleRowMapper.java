@@ -1,6 +1,5 @@
 package com.sahiltech.task.tracker.dto;
 
-import com.sahiltech.task.tracker.model.Errors;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

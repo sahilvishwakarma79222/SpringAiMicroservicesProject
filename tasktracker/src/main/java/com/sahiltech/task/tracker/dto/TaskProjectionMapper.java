@@ -15,8 +15,8 @@ public class TaskProjectionMapper implements RowMapper<TaskProjection> {
         projection.setId(rs.getLong("id"));
         projection.setTitle(rs.getString("title"));
         projection.setStatus(rs.getString("status"));
-         projection.setEmployeeName(rs.getString("employeeName")); // ✅ correct alias
-        projection.setProjectName(rs.getString("projectName"));   // ✅ correct alias
+         projection.setEmployeeName(rs.getString("employeeName"));  
+        projection.setProjectName(rs.getString("projectName"));    
          projection.setEmployeeName(rs.getString("employeeName"));
         projection.setProjectName(rs.getString("projectName"));
  

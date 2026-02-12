@@ -23,7 +23,7 @@ public class ErrorRepo {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // ✅ INSERT Query (updated)
+    //  INSERt ka  Query (updated)
     private static final String SQL_INSERT = """
         INSERT INTO errors (title, description, status, priority, client_name, project_id, module_id, reported_by, assigned_to, error_date, solved_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -33,7 +33,7 @@ public class ErrorRepo {
     private static final String SQL_DELETE_BY_ID = "DELETE FROM errors WHERE id = ?";
  
   
-    // ✅ UPDATE Query (updated)
+    //  UPDATE Query (updated)
     private static final String SQL_UPDATE_BY_ID = """
         UPDATE errors
         SET title = ?, description = ?, status = ?, priority = ?, client_name = ?, project_id = ?, module_id = ?, reported_by = ?, assigned_to = ?, error_date = ?, solved_date = ?
@@ -43,7 +43,7 @@ public class ErrorRepo {
     private static final String SQL_GET_ALL = "SELECT * FROM errors";
     private static final String SQL_COUNT_ALL = "SELECT COUNT(*) FROM errors";
 
-    // ✅ CREATE
+    //  CREATE
     public Errors saveError(Errors error) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -72,13 +72,13 @@ public class ErrorRepo {
     }
 
 
-    // ✅ READ BY ID
+    //  READ BY ID
     public Errors getById(Long id) {
         return jdbcTemplate.queryForObject(SQL_GET_BY_ID, new ErrorRowMapper(), id);
     }
 
 
-    // ✅ UPDATE
+    //  UPDATE
     public String updateError(long id, Errors error) {
         jdbcTemplate.update(SQL_UPDATE_BY_ID,
                 error.getTitle(),
@@ -99,24 +99,24 @@ public class ErrorRepo {
     }
 
 
-    // ✅ DELETE
+    //  DELETE
     public String deleteError(long id) {
         jdbcTemplate.update(SQL_DELETE_BY_ID, id);
         return "Error deleted successfully with id " + id;
     }
 
 
-    // ✅ GET ALL
+    //  GET ALL
     public List<Errors> getAllErrors() {
         return jdbcTemplate.query(SQL_GET_ALL, new ErrorRowMapper());
     }
 
-    // ✅ COUNT
+    //  COUNT
     public int countAllErrors() {
         return jdbcTemplate.queryForObject(SQL_COUNT_ALL, Integer.class);
     }
 
-    // ✅ SMART PAGINATION
+    //  SMART PAGINATION
     public Map<String, Object> getErrorsSmartPagination(
             int pageNumber,
             int pageSize,
@@ -149,7 +149,7 @@ public class ErrorRepo {
 
         List<Errors> errors = jdbcTemplate.query(sql.toString(), new ErrorRowMapper(), params.toArray());
 
-        // ✅ Count total records
+        //  Count total records
         StringBuilder countSql = new StringBuilder("SELECT COUNT(*) FROM errors");
         List<Object> countParams = new ArrayList<>();
         if (searchTerm != null && !searchTerm.isEmpty()) {

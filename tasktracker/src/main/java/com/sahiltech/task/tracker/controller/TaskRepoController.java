@@ -56,8 +56,7 @@ public class TaskRepoController {
         return new ResponseEntity<>(service.deleteTask(id), HttpStatus.OK);
     }
 
-    // 🔹 Smart Pagination (All Tasks)
-    @GetMapping("/smart")
+     @GetMapping("/smart")
     public ResponseEntity<Map<String, Object>> getTasksSmart(
             @RequestParam(name="page", defaultValue = "1") int page,
             @RequestParam(name="size", defaultValue = "10") int size,
@@ -70,8 +69,7 @@ public class TaskRepoController {
         return ResponseEntity.ok(response);
     }
 
-    // 🔹 Smart by Employee
-    @GetMapping("/employee/{employeeId}/smart")
+     @GetMapping("/employee/{employeeId}/smart")
     public ResponseEntity<Map<String, Object>> getTasksByEmployeeSmart(
             @PathVariable("employeeId") Long employeeId,
             @RequestParam(name="page", defaultValue = "1") int page,
@@ -85,8 +83,7 @@ public class TaskRepoController {
         return ResponseEntity.ok(response);
     }
 
-    // 🔹 Smart by Project
-    @GetMapping("/project/{projectId}/smart")
+     @GetMapping("/project/{projectId}/smart")
     public ResponseEntity<Map<String, Object>> getTasksByProjectSmart(
             @PathVariable("projectId") Long projectId,
             @RequestParam(name="page", defaultValue = "1") int page,
