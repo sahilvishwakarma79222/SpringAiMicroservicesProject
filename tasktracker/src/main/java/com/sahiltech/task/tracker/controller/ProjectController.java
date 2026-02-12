@@ -14,17 +14,17 @@ import java.util.Map;
 @RequestMapping("/api/v1/project")
 public class ProjectController {
 
-private final ProjectServiceImpl service;
+    private final ProjectServiceImpl service;
 
-public ProjectController(ProjectServiceImpl service){
-    this.service=service;
-}
+    public ProjectController(ProjectServiceImpl service){
+        this.service = service;
+    }
 
-@PostMapping("/save")
-public ResponseEntity<Project> saveProject(@RequestBody Project project){
-    Project project1 = service.saveProject(project);
-    return new ResponseEntity<>(project1, HttpStatus.OK);
-}
+    @PostMapping("/save")
+    public ResponseEntity<Project> saveProject(@RequestBody Project project){
+        Project project1 = service.saveProject(project);
+        return new ResponseEntity<>(project1, HttpStatus.OK);
+    }
 
     @GetMapping("/getProjectsCount")
     public ResponseEntity<Integer> saveEmployeeCount(){
@@ -33,7 +33,9 @@ public ResponseEntity<Project> saveProject(@RequestBody Project project){
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Long id){
+    public ResponseEntity<Project> getProjectById(
+            @PathVariable("id") Long id){
+
         Project project1 = service.getProjectById(id);
         return new ResponseEntity<>(project1, HttpStatus.OK);
     }
@@ -43,23 +45,27 @@ public ResponseEntity<Project> saveProject(@RequestBody Project project){
         List<Project> projects = service.getAllProjects();
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
-    
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateProject(@PathVariable Long id,@RequestBody Project project){
+    public ResponseEntity<String> updateProject(
+            @PathVariable("id") Long id,
+            @RequestBody Project project){
+
         String msg = service.updateProject(id, project);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
+
     @GetMapping("/smart")
     public ResponseEntity<Map<String, Object>> getProjectsSmart(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String search
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
+            @RequestParam(name = "search", required = false) String search
     ) {
-        Map<String, Object> response = service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
+        Map<String, Object> response =
+                service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
+
         return ResponseEntity.ok(response);
     }
-
-
 }

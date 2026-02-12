@@ -33,19 +33,26 @@ public class NewModuleTaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NewModuleTask> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<NewModuleTask> getTaskById(
+            @PathVariable("id") Long id) {
+
         NewModuleTask task = service.getTaskById(id);
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateTask(@PathVariable long id, @RequestBody NewModuleTask task) {
+    public ResponseEntity<String> updateTask(
+            @PathVariable("id") Long id,
+            @RequestBody NewModuleTask task) {
+
         String msg = service.updateTask(id, task);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable long id) {
+    public ResponseEntity<String> deleteTask(
+            @PathVariable("id") Long id) {
+
         String msg = service.deleteTask(id);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
@@ -58,13 +65,16 @@ public class NewModuleTaskController {
 
     @GetMapping("/smart")
     public ResponseEntity<Map<String, Object>> getSmartPaginatedTasks(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String search
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
+            @RequestParam(name = "search", required = false) String search
     ) {
-        Map<String, Object> response = service.getSmartPaginatedTasks(page, size, sortBy, sortDir, search);
+
+        Map<String, Object> response =
+                service.getSmartPaginatedTasks(page, size, sortBy, sortDir, search);
+
         return ResponseEntity.ok(response);
     }
 }

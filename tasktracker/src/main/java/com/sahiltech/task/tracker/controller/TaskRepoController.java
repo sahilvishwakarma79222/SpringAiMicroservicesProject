@@ -2,7 +2,6 @@ package com.sahiltech.task.tracker.controller;
 
 import com.sahiltech.task.tracker.model.Task;
 import com.sahiltech.task.tracker.serviceimpl.TaskServiceImpl;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,85 +14,89 @@ import java.util.Map;
 @RequestMapping("/api/v1/task")
 public class TaskRepoController {
 
-private final TaskServiceImpl service;
+    private final TaskServiceImpl service;
 
-public TaskRepoController(TaskServiceImpl service){
-    this.service=service;
-}
+    public TaskRepoController(TaskServiceImpl service){
+        this.service = service;
+    }
 
-@PostMapping("/save")
-public ResponseEntity<Task> saveTask(@RequestBody Task task){
-    return new ResponseEntity<>(service.createTask(task), HttpStatus.OK);
-}
-
+    @PostMapping("/save")
+    public ResponseEntity<Task> saveTask(@RequestBody Task task){
+        return new ResponseEntity<>(service.createTask(task), HttpStatus.OK);
+    }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Task> getById(@PathVariable Long id){
-        return new ResponseEntity<>(service.getByIdTask(id),HttpStatus.OK);
+    public ResponseEntity<Task> getById(@PathVariable("id") Long id){
+        return new ResponseEntity<>(service.getByIdTask(id), HttpStatus.OK);
     }
 
     @GetMapping("/getByEmployeeId/{id}")
-    public ResponseEntity<List<Task>> getByEmpId(@PathVariable Long id){
-        return new ResponseEntity<>(service.getByIdEmployeeId(id),HttpStatus.OK);
+    public ResponseEntity<List<Task>> getByEmpId(@PathVariable("id") Long id){
+        return new ResponseEntity<>(service.getByIdEmployeeId(id), HttpStatus.OK);
     }
 
     @GetMapping("/getByProjectId/{id}")
-    public ResponseEntity<List<Task>> getByProjectId(@PathVariable Long id){
-        return new ResponseEntity<>(service.getByIdProjectId(id),HttpStatus.OK);
+    public ResponseEntity<List<Task>> getByProjectId(@PathVariable("id") Long id){
+        return new ResponseEntity<>(service.getByIdProjectId(id), HttpStatus.OK);
     }
 
-@GetMapping("/all")
-public ResponseEntity<List<Task>> getAllTask(){
-    return new ResponseEntity<>(service.getAllTask(),HttpStatus.OK);
-}
+    @GetMapping("/all")
+    public ResponseEntity<List<Task>> getAllTask(){
+        return new ResponseEntity<>(service.getAllTask(), HttpStatus.OK);
+    }
 
-@PutMapping("/update/{id}")
-public ResponseEntity<String> updateTask(@PathVariable long id,@RequestBody Task task){
-    return new ResponseEntity<>(service.updateTask(id,task),HttpStatus.OK);
-}
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateTask(@PathVariable("id") long id,
+                                             @RequestBody Task task){
+        return new ResponseEntity<>(service.updateTask(id, task), HttpStatus.OK);
+    }
 
-@DeleteMapping("/delete/{id}")
-public ResponseEntity<String> deleteTaskById(@PathVariable long id){
-    return new ResponseEntity<>(service.deleteTask(id),HttpStatus.OK);
-}
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteTaskById(@PathVariable("id") long id){
+        return new ResponseEntity<>(service.deleteTask(id), HttpStatus.OK);
+    }
 
-
+    // 🔹 Smart Pagination (All Tasks)
     @GetMapping("/smart")
-    public ResponseEntity<Map<String, Object>> getProjectsSmart(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String search
+    public ResponseEntity<Map<String, Object>> getTasksSmart(
+            @RequestParam(name="page", defaultValue = "1") int page,
+            @RequestParam(name="size", defaultValue = "10") int size,
+            @RequestParam(name="sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name="sortDir", defaultValue = "asc") String sortDir,
+            @RequestParam(name="search", required = false) String search
     ) {
-        Map<String, Object> response = service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
+        Map<String, Object> response =
+                service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
         return ResponseEntity.ok(response);
     }
 
+    // 🔹 Smart by Employee
     @GetMapping("/employee/{employeeId}/smart")
     public ResponseEntity<Map<String, Object>> getTasksByEmployeeSmart(
-            @PathVariable Long employeeId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "t.id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String search
+            @PathVariable("employeeId") Long employeeId,
+            @RequestParam(name="page", defaultValue = "1") int page,
+            @RequestParam(name="size", defaultValue = "10") int size,
+            @RequestParam(name="sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name="sortDir", defaultValue = "asc") String sortDir,
+            @RequestParam(name="search", required = false) String search
     ) {
-        Map<String, Object> response = service.getByEmployeeIdSmart(employeeId, page, size, sortBy, sortDir, search);
+        Map<String, Object> response =
+                service.getByEmployeeIdSmart(employeeId, page, size, sortBy, sortDir, search);
         return ResponseEntity.ok(response);
     }
 
+    // 🔹 Smart by Project
     @GetMapping("/project/{projectId}/smart")
     public ResponseEntity<Map<String, Object>> getTasksByProjectSmart(
-            @PathVariable Long projectId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "t.id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String search
+            @PathVariable("projectId") Long projectId,
+            @RequestParam(name="page", defaultValue = "1") int page,
+            @RequestParam(name="size", defaultValue = "10") int size,
+            @RequestParam(name="sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name="sortDir", defaultValue = "asc") String sortDir,
+            @RequestParam(name="search", required = false) String search
     ) {
-        Map<String, Object> response = service.getByProjectIdSmart(projectId, page, size, sortBy, sortDir, search);
+        Map<String, Object> response =
+                service.getByProjectIdSmart(projectId, page, size, sortBy, sortDir, search);
         return ResponseEntity.ok(response);
     }
-
 }
