@@ -9,6 +9,7 @@ import java.util.Map;
 
 @Service
 public class NewModuleServiceImpl {
+
     private final NewModuleRepo moduleRepo;
 
     public NewModuleServiceImpl(NewModuleRepo moduleRepo) {
@@ -31,15 +32,12 @@ public class NewModuleServiceImpl {
         return moduleRepo.getAllModules();
     }
 
-<<<<<<< HEAD
-    public String updateModule(Long id, Module module) {
-=======
-    public List<NewModule> getAllModulesByProjectId(Long projectid) {
-        return moduleRepo.getModuleByProjectId(projectid);
+    // ✅ This was missing properly after merge
+    public List<Module> getAllModulesByProjectId(Long projectId) {
+        return moduleRepo.getModuleByProjectId(projectId);
     }
 
-    public String updateModule(Long id, NewModule module) {
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
+    public String updateModule(Long id, Module module) {
         return moduleRepo.updateModule(id, module);
     }
 
@@ -56,5 +54,4 @@ public class NewModuleServiceImpl {
     ) {
         return moduleRepo.getModulesSmartPagination(page, size, sortBy, sortDir, search);
     }
-
 }
