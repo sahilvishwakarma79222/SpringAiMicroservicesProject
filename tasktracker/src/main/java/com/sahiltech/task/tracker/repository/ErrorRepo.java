@@ -23,31 +23,16 @@ public class ErrorRepo {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-<<<<<<< HEAD
-    private static final String SQL_INSERT = """
-        INSERT INTO errors (title, description, status, priority, client_name, project_id, error_date, solved_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-=======
     // ✅ INSERT Query (updated)
     private static final String SQL_INSERT = """
         INSERT INTO errors (title, description, status, priority, client_name, project_id, module_id, reported_by, assigned_to, error_date, solved_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
     """;
 
     private static final String SQL_GET_BY_ID = "SELECT * FROM errors WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM errors WHERE id = ?";
-<<<<<<< HEAD
-    private static final String SQL_UPDATE_BY_ID = """
-        UPDATE errors
-        SET title = ?, description = ?, status = ?, priority = ?, client_name = ?, project_id = ?, error_date = ?, solved_date = ?
-        WHERE id = ?
-    """;
-    private static final String SQL_GET_ALL = "SELECT * FROM errors";
-    private static final String SQL_COUNT_ALL = "SELECT COUNT(*) FROM errors";
-
-=======
-
+ 
+  
     // ✅ UPDATE Query (updated)
     private static final String SQL_UPDATE_BY_ID = """
         UPDATE errors
@@ -57,7 +42,6 @@ public class ErrorRepo {
 
     private static final String SQL_GET_ALL = "SELECT * FROM errors";
     private static final String SQL_COUNT_ALL = "SELECT COUNT(*) FROM errors";
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
 
     // ✅ CREATE
     public Errors saveError(Errors error) {
@@ -71,16 +55,13 @@ public class ErrorRepo {
             ps.setString(4, error.getPriority());
             ps.setString(5, error.getClientName());
             ps.setLong(6, error.getProjectId());
-<<<<<<< HEAD
             ps.setObject(7, error.getErrorDate());
             ps.setObject(8, error.getSolvedDate());
-=======
             ps.setObject(7, error.getModuleId());
             ps.setObject(8, error.getReportedBy());
             ps.setObject(9, error.getAssignedTo());
             ps.setObject(10, error.getErrorDate());
             ps.setObject(11, error.getSolvedDate());
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
             return ps;
         }, keyHolder);
 
@@ -90,19 +71,13 @@ public class ErrorRepo {
         return error;
     }
 
-<<<<<<< HEAD
 
-=======
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
     // ✅ READ BY ID
     public Errors getById(Long id) {
         return jdbcTemplate.queryForObject(SQL_GET_BY_ID, new ErrorRowMapper(), id);
     }
 
-<<<<<<< HEAD
 
-=======
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
     // ✅ UPDATE
     public String updateError(long id, Errors error) {
         jdbcTemplate.update(SQL_UPDATE_BY_ID,
@@ -112,12 +87,10 @@ public class ErrorRepo {
                 error.getPriority(),
                 error.getClientName(),
                 error.getProjectId(),
-<<<<<<< HEAD
-=======
+
                 error.getModuleId(),
                 error.getReportedBy(),
                 error.getAssignedTo(),
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
                 error.getErrorDate(),
                 error.getSolvedDate(),
                 id
@@ -125,11 +98,6 @@ public class ErrorRepo {
         return "Error updated successfully with id " + id;
     }
 
-    // ✅ DELETE
-    public String deleteError(long id) {
-        jdbcTemplate.update(SQL_DELETE_BY_ID, id);
-        return "Error deleted successfully with id " + id;
-    }
 
     // ✅ DELETE
     public String deleteError(long id) {
@@ -208,9 +176,5 @@ public class ErrorRepo {
 
         return result;
     }
-<<<<<<< HEAD
-}
-=======
 
 }
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46

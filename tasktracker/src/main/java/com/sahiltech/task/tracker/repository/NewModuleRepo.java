@@ -1,13 +1,9 @@
 package com.sahiltech.task.tracker.repository;
 
-<<<<<<< HEAD
 import com.sahiltech.task.tracker.dto.ModuleRowMapper;
 import com.sahiltech.task.tracker.model.Module;
-=======
 import com.sahiltech.task.tracker.dto.NewModuleRowMapper;
-import com.sahiltech.task.tracker.model.NewModule;
 import org.springframework.dao.EmptyResultDataAccessException;
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -33,19 +29,7 @@ public class NewModuleRepo {
         INSERT INTO modules(name, description, status, priority, client_name, project_id, start_date, completed_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """;
-<<<<<<< HEAD
 
-    private final String sqlGetById = "SELECT * FROM modules WHERE id = ?";
-    private final String sqlDeleteById = "DELETE FROM modules WHERE id = ?";
-    private final String sqlUpdateById = """
-        UPDATE modules 
-        SET name=?, description=?, status=?, priority=?, client_name=?, project_id=?, start_date=?, completed_date=? 
-        WHERE id=?
-    """;
-    private final String sqlGetAll = "SELECT * FROM modules";
-    private final String sqlGetAllCount = "SELECT COUNT(*) FROM modules";
-=======
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
 
     private final String sqlGetById = "SELECT * FROM modules WHERE id = ?";
     private final String sqlDeleteById = "DELETE FROM modules WHERE id = ?";
@@ -67,7 +51,6 @@ public class NewModuleRepo {
     public NewModule saveModule(NewModule module) {
         if (module == null) return null;
 
-<<<<<<< HEAD
     // ✅ CREATE (with null safety)
     public Module saveModule(Module module) {
         if (module == null) return null;

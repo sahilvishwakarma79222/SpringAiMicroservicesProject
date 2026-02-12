@@ -52,9 +52,7 @@ public class TaskServiceImpl {
             String search
     ) {
         return taskRepo.getTasksSmartPagination(page, size, sortBy, sortDir, search);
-<<<<<<< HEAD
-=======
-    }
+     }
 
     public Map<String, Object> getByEmployeeIdSmart(
             Long employeeId,
@@ -75,7 +73,6 @@ public class TaskServiceImpl {
             String search
     ) {
         return taskRepo.getByProjectIdSmart(projectId, page, size, sortBy, sortDir, search);
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
-    }
+     }
 
 }

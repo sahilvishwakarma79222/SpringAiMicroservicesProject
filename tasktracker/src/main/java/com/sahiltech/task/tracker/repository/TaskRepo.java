@@ -20,11 +20,9 @@ import java.util.Map;
 @Repository
 public class TaskRepo {
 
-<<<<<<< HEAD
-=======
+ 
 
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
-    private final JdbcTemplate jdbcTemplate;
+     private final JdbcTemplate jdbcTemplate;
 
     public TaskRepo(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -37,8 +35,6 @@ public class TaskRepo {
         (title, description, status, priority, project_id, module_id, employee_id, error_id, assigned_date, completed_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """;
-<<<<<<< HEAD
-=======
 
     private static final String SQL_UPDATE = """
         UPDATE tasks 
@@ -46,29 +42,13 @@ public class TaskRepo {
         WHERE id=?
     """;
 
-    private static final String SQL_GET_BY_ID = "SELECT * FROM tasks WHERE id=?";
-    private static final String SQL_DELETE_BY_ID = "DELETE FROM tasks WHERE id=?";
-    private static final String SQL_GET_ALL = "SELECT * FROM tasks";
-    private static final String SQL_GET_BY_PROJECT = "SELECT * FROM tasks WHERE project_id=?";
-    private static final String SQL_GET_BY_EMPLOYEE = "SELECT * FROM tasks WHERE employee_id=?";
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
-
-    private static final String SQL_UPDATE = """
-        UPDATE tasks 
-        SET title=?, description=?, status=?, priority=?, project_id=?, module_id=?, employee_id=?, error_id=?, assigned_date=?, completed_date=? 
-        WHERE id=?
-    """;
-
-<<<<<<< HEAD
-    private static final String SQL_GET_BY_ID = "SELECT * FROM tasks WHERE id=?";
+     private static final String SQL_GET_BY_ID = "SELECT * FROM tasks WHERE id=?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM tasks WHERE id=?";
     private static final String SQL_GET_ALL = "SELECT * FROM tasks";
     private static final String SQL_GET_BY_PROJECT = "SELECT * FROM tasks WHERE project_id=?";
     private static final String SQL_GET_BY_EMPLOYEE = "SELECT * FROM tasks WHERE employee_id=?";
 
-=======
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
-    // ------------------ CRUD OPERATIONS ------------------
+     // ------------------ CRUD OPERATIONS ------------------
 
     public Task saveTask(Task task) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -102,22 +82,6 @@ public class TaskRepo {
         return jdbcTemplate.query(SQL_GET_BY_EMPLOYEE, new TaskRowMapper(), employeeId);
     }
 
-<<<<<<< HEAD
-
-    public List<Task> getAllTasks() {
-        return jdbcTemplate.query(SQL_GET_ALL, new TaskRowMapper());
-    }
-
-    public List<Task> getAllTask(Long employeeId) {
-        return jdbcTemplate.query(SQL_GET_ALL, new TaskRowMapper(), employeeId);
-    }
-
-    public List<Task> getByProjectId(Long projectId) {
-        return jdbcTemplate.query(SQL_GET_BY_PROJECT, new TaskRowMapper(), projectId);
-    }
-
-
-=======
     public List<Task> getByProjectId(Long projectId) {
         return jdbcTemplate.query(SQL_GET_BY_PROJECT, new TaskRowMapper(), projectId);
     }
@@ -126,7 +90,6 @@ public class TaskRepo {
         return jdbcTemplate.query(SQL_GET_ALL, new TaskRowMapper());
     }
 
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
     public String updateTask(Long id, Task task) {
         jdbcTemplate.update(SQL_UPDATE,
                 task.getTitle(),
@@ -152,8 +115,7 @@ public class TaskRepo {
     // ------------------ SMART PAGINATION ------------------
 
     public Map<String, Object> getTasksSmartPagination(
-<<<<<<< HEAD
-=======
+
             int pageNumber,
             int pageSize,
             String sortBy,
@@ -234,7 +196,6 @@ public class TaskRepo {
 
     public Map<String, Object> getByEmployeeIdSmart(
             Long employeeId,
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
             int pageNumber,
             int pageSize,
             String sortBy,
@@ -249,34 +210,17 @@ public class TaskRepo {
         int offset = (pageNumber - 1) * pageSize;
 
         String baseQuery = """
-<<<<<<< HEAD
             FROM tasks t
             LEFT JOIN employees e ON t.employee_id = e.id
             LEFT JOIN projects p ON t.project_id = p.id
+            WHERE t.employee_id = ?
         """;
 
         StringBuilder sql = new StringBuilder("""
-            SELECT t.id, t.title, t.status, t.priority, t.assigned_date, t.completed_date, 
+            SELECT t.id, t.title, t.status, t.priority, t.assigned_date, t.completed_date,
                    e.name AS employeeName, p.name AS projectName
         """);
-        sql.append(baseQuery);
 
-        List<Object> params = new ArrayList<>();
-
-        // 🔍 Search
-        if (searchTerm != null && !searchTerm.isEmpty()) {
-            sql.append(" WHERE LOWER(t.title) LIKE ? OR LOWER(t.status) LIKE ? OR LOWER(e.name) LIKE ? OR LOWER(p.name) LIKE ?");
-=======
-        FROM tasks t
-        LEFT JOIN employees e ON t.employee_id = e.id
-        LEFT JOIN projects p ON t.project_id = p.id
-        WHERE t.employee_id = ?
-    """;
-
-        StringBuilder sql = new StringBuilder("""
-        SELECT t.id, t.title, t.status, t.priority, t.assigned_date, t.completed_date,
-               e.name AS employeeName, p.name AS projectName
-    """);
         sql.append(baseQuery);
 
         List<Object> params = new ArrayList<>();
@@ -285,7 +229,6 @@ public class TaskRepo {
         // 🔍 Optional search
         if (searchTerm != null && !searchTerm.isEmpty()) {
             sql.append(" AND (LOWER(t.title) LIKE ? OR LOWER(t.status) LIKE ? OR LOWER(p.name) LIKE ?)");
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
             String search = "%" + searchTerm.toLowerCase() + "%";
             params.add(search);
             params.add(search);
@@ -293,25 +236,23 @@ public class TaskRepo {
         }
 
         // 🔽 Sorting
-        sql.append(" ORDER BY ").append(sortBy).append(" ").append(sortDir.equalsIgnoreCase("desc") ? "DESC" : "ASC");
+        sql.append(" ORDER BY ")
+           .append(sortBy)
+           .append(" ")
+           .append(sortDir.equalsIgnoreCase("desc") ? "DESC" : "ASC");
 
         // 📄 Pagination
         sql.append(" LIMIT ? OFFSET ?");
         params.add(pageSize);
         params.add(offset);
 
-        List<TaskProjection> tasks = jdbcTemplate.query(sql.toString(), new TaskProjectionMapper(), params.toArray());
+        List<TaskProjection> tasks =
+                jdbcTemplate.query(sql.toString(), new TaskProjectionMapper(), params.toArray());
 
-<<<<<<< HEAD
-        // 📊 Count
-        StringBuilder countSql = new StringBuilder("SELECT COUNT(*) ").append(baseQuery);
-        List<Object> countParams = new ArrayList<>();
-=======
         // 📊 Count query
         StringBuilder countSql = new StringBuilder("SELECT COUNT(*) ").append(baseQuery);
         List<Object> countParams = new ArrayList<>();
         countParams.add(employeeId);
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
 
         if (searchTerm != null && !searchTerm.isEmpty()) {
             countSql.append(" AND (LOWER(t.title) LIKE ? OR LOWER(t.status) LIKE ? OR LOWER(p.name) LIKE ?)");
@@ -321,14 +262,14 @@ public class TaskRepo {
             countParams.add(search);
         }
 
-        int totalRecords = jdbcTemplate.queryForObject(countSql.toString(), Integer.class, countParams.toArray());
+        int totalRecords = jdbcTemplate.queryForObject(
+                countSql.toString(),
+                Integer.class,
+                countParams.toArray()
+        );
+
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
-<<<<<<< HEAD
-        // 🧾 Final result
-=======
-        // 🧾 Final response
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("results", tasks);
         result.put("totalRecords", totalRecords);
@@ -341,9 +282,7 @@ public class TaskRepo {
 
         return result;
     }
-<<<<<<< HEAD
-}
-=======
+
 
     public Map<String, Object> getByProjectIdSmart(
             Long projectId,
@@ -426,4 +365,3 @@ public class TaskRepo {
     }
 
 }
->>>>>>> a8c2907b139d5784acf2886000fb6a6fea40ca46
