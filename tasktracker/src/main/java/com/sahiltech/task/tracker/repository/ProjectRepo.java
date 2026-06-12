@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Date;
 import java.util.*;
 
 @Repository
@@ -21,9 +22,9 @@ public class ProjectRepo {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // ✅ SQL Statements
+    // ✅ SQL Statements with new fields
     private static final String SQL_INSERT =
-            "INSERT INTO projects(name, description, status) VALUES (?, ?, ?)";
+            "INSERT INTO projects(name, description, projecthead, projectmanager, status, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_FIND_BY_ID =
             "SELECT * FROM projects WHERE id = ?";
@@ -32,7 +33,7 @@ public class ProjectRepo {
             "DELETE FROM projects WHERE id = ?";
 
     private static final String SQL_UPDATE_BY_ID =
-            "UPDATE projects SET name = ?, description = ?, status = ? WHERE id = ?";
+            "UPDATE projects SET name = ?, description = ?, projecthead = ?, projectmanager = ?, status = ?, start_date = ?, end_date = ? WHERE id = ?";
 
     private static final String SQL_FIND_ALL =
             "SELECT * FROM projects";
@@ -43,15 +44,13 @@ public class ProjectRepo {
     private static final String SQL_FIND_ALL_PAGINATED =
             "SELECT * FROM projects LIMIT ? OFFSET ?";
 
-
     // ✅ Count all
     public int countAllProjects() {
         Integer count = jdbcTemplate.queryForObject(SQL_COUNT_ALL, Integer.class);
         return count != null ? count : 0;
     }
 
-
-    // ✅ Create
+    //  Create with new fields
     public Project saveProject(Project project) {
         if (project == null) return null;
 
@@ -61,7 +60,14 @@ public class ProjectRepo {
             PreparedStatement ps = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
-            ps.setString(3, project.getStatus());
+            ps.setString(3, project.getProjecthead());
+            ps.setString(4, project.getProjectmanager());
+            ps.setString(5, project.getStatus());
+            
+            // Handle dates - null allowed
+            ps.setDate(6, project.getStartDate() != null ? new Date(project.getStartDate().getTime()) : null);
+            ps.setDate(7, project.getEndDate() != null ? new Date(project.getEndDate().getTime()) : null);
+            
             return ps;
         }, keyHolder);
 
@@ -72,8 +78,7 @@ public class ProjectRepo {
         return project;
     }
 
-
-    // ✅ Read by ID (null-safe)
+    //  Read by ID
     public Project getById(Long id) {
         if (id == null) return null;
 
@@ -84,7 +89,6 @@ public class ProjectRepo {
         }
     }
 
-
     // ✅ Delete
     public String deleteProject(long id) {
         int rows = jdbcTemplate.update(SQL_DELETE_BY_ID, id);
@@ -93,15 +97,18 @@ public class ProjectRepo {
                 : "No project found with id " + id;
     }
 
-
-    // ✅ Update
+    // ✅ Update with new fields
     public String updateProject(long id, Project project) {
         if (project == null) return "Invalid project data";
 
         int rows = jdbcTemplate.update(SQL_UPDATE_BY_ID,
                 project.getName(),
                 project.getDescription(),
+                project.getProjecthead(),
+                project.getProjectmanager(),
                 project.getStatus(),
+                project.getStartDate() != null ? new Date(project.getStartDate().getTime()) : null,
+                project.getEndDate() != null ? new Date(project.getEndDate().getTime()) : null,
                 id
         );
 
@@ -110,16 +117,13 @@ public class ProjectRepo {
                 : "No project found with id " + id;
     }
 
-
     // ✅ Get all
     public List<Project> getAllProjects() {
         return jdbcTemplate.query(SQL_FIND_ALL, new ProjectRowMapper());
     }
 
-
     // ✅ Simple Pagination
     public Map<String, Object> getProjectsPage(int pageNumber, int pageSize) {
-
         if (pageNumber < 1) pageNumber = 1;
         if (pageSize < 1) pageSize = 10;
 
@@ -140,8 +144,7 @@ public class ProjectRepo {
         return response;
     }
 
-
-    // ✅ Smart Pagination (Search + Sort)
+    // ✅ Smart Pagination with search
     public Map<String, Object> getProjectsSmartPagination(
             int pageNumber,
             int pageSize,
@@ -149,7 +152,6 @@ public class ProjectRepo {
             String sortDir,
             String searchTerm
     ) {
-
         if (sortBy == null || sortBy.isEmpty()) sortBy = "id";
         if (sortDir == null || sortDir.isEmpty()) sortDir = "asc";
         if (pageNumber < 1) pageNumber = 1;
@@ -160,10 +162,12 @@ public class ProjectRepo {
         StringBuilder sql = new StringBuilder("SELECT * FROM projects");
         List<Object> params = new ArrayList<>();
 
-        // 🔍 Search
+        // 🔍 Search - add new fields to search
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            sql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ?");
+            sql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(projecthead) LIKE ? OR LOWER(projectmanager) LIKE ?");
             String like = "%" + searchTerm.toLowerCase() + "%";
+            params.add(like);
+            params.add(like);
             params.add(like);
             params.add(like);
             params.add(like);
@@ -188,8 +192,10 @@ public class ProjectRepo {
         List<Object> countParams = new ArrayList<>();
 
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            countSql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ?");
+            countSql.append(" WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(status) LIKE ? OR LOWER(projecthead) LIKE ? OR LOWER(projectmanager) LIKE ?");
             String like = "%" + searchTerm.toLowerCase() + "%";
+            countParams.add(like);
+            countParams.add(like);
             countParams.add(like);
             countParams.add(like);
             countParams.add(like);

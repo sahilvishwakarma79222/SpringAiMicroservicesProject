@@ -616,10 +616,6 @@
 //     </div>
 //   );
 // }
-
-
-
-
 "use client";
 import React, { useState, useEffect } from "react";
 import { 
@@ -648,11 +644,18 @@ import {
   FaEllipsisH,
   FaCheckCircle,
   FaClock,
-  FaPauseCircle
+  FaPauseCircle,
+  FaCalendarAlt,
+  FaUserTie,
+  FaUserCog,
+  FaHourglassHalf,
+  FaBan,
+  FaCheck,
+  FaStopCircle
 } from "react-icons/fa";
 import API from "@/services/api";
 
-export default function ProjectsPage() {
+const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -673,26 +676,42 @@ export default function ProjectsPage() {
   const [formData, setFormData] = useState({ 
     name: "", 
     description: "",
-    status: "Active"  // New status field
+    projecthead: "",
+    projectmanager: "",
+    status: "planning",  // ✅ Default changed to 'planning'
+    startDate: "",
+    endDate: ""
   });
   const [editId, setEditId] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   // Page size options
   const pageSizeOptions = [5, 10, 20, 50];
 
-  // Status colors and icons
+  // ✅ NEW: Status options as per requirement - EXACT case-sensitive values
+  const statusOptions = [
+    "planning",
+    "active", 
+    "onHold",
+    "completed",
+    "cancelled"
+  ];
+
+  // ✅ Status colors and icons
   const statusColors = {
-    "Active": "success",
-    "Inactive": "secondary",
-    "Completed": "primary",
-    "On Hold": "warning"
+    "planning": "secondary",
+    "active": "success",
+    "onHold": "warning",
+    "completed": "primary",
+    "cancelled": "danger"
   };
 
   const statusIcons = {
-    "Active": <FaCheckCircle className="me-1" />,
-    "Inactive": <FaPauseCircle className="me-1" />,
-    "Completed": <FaCheckCircle className="me-1" />,
-    "On Hold": <FaClock className="me-1" />
+    "planning": <FaHourglassHalf className="me-1" />,
+    "active": <FaCheckCircle className="me-1" />,
+    "onHold": <FaClock className="me-1" />,
+    "completed": <FaCheck className="me-1" />,
+    "cancelled": <FaBan className="me-1" />
   };
 
   // Color palette for avatar backgrounds
@@ -711,6 +730,37 @@ export default function ProjectsPage() {
     return name ? name.charAt(0).toUpperCase() : 'P';
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Not set';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  // Format status for display (capitalize first letter)
+  const formatStatus = (status) => {
+    if (!status) return 'planning';
+    
+    // Special case for onHold -> On Hold
+    if (status === 'onHold') return 'On Hold';
+    
+    // Capitalize first letter
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
+  // Validate form
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.name.trim()) {
+      errors.name = "Project name is required";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   // 🔍 Fetch Projects with Pagination + Search + Sorting
   const fetchProjects = async () => {
     setLoading(true);
@@ -723,7 +773,6 @@ export default function ProjectsPage() {
       setTotalRecords(res.data.totalRecords || 0);
     } catch (err) {
       console.error("Error fetching projects:", err);
-      // Fallback to simple getAll if smart endpoint doesn't exist
       try {
         const res = await API.get("/project/getAllProjects");
         setProjects(res.data || []);
@@ -742,19 +791,36 @@ export default function ProjectsPage() {
   }, [page, size, search, sortBy, sortDir]);
 
   const handleShow = () => setShowModal(true);
+  
   const handleClose = () => {
     setShowModal(false);
-    setFormData({ name: "", description: "", status: "Active" });
+    setFormData({ 
+      name: "", 
+      description: "", 
+      projecthead: "",
+      projectmanager: "",
+      status: "planning",  // ✅ Default 'planning'
+      startDate: "",
+      endDate: ""
+    });
+    setFormErrors({});
     setEditId(null);
     setSelectedProject(null);
   };
 
   const handleSave = async () => {
+    if (!validateForm()) return;
+    
     try {
+      const projectData = {
+        ...formData,
+        ...(!editId && { status: "planning" })  // ✅ New projects default to 'planning'
+      };
+
       if (editId) {
-        await API.put(`/project/update/${editId}`, formData);
+        await API.put(`/project/update/${editId}`, projectData);
       } else {
-        await API.post("/project/save", formData);
+        await API.post("/project/save", projectData);
       }
       fetchProjects();
       handleClose();
@@ -766,9 +832,14 @@ export default function ProjectsPage() {
   const handleEdit = (project) => {
     setFormData({
       name: project.name,
-      description: project.description,
-      status: project.status || "Active"  // Default to Active if status is not set
+      description: project.description || "",
+      projecthead: project.projecthead || "",
+      projectmanager: project.projectmanager || "",
+      status: project.status || "planning",  // ✅ Default to 'planning'
+      startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : "",
+      endDate: project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : ""
     });
+    setFormErrors({});
     setEditId(project.id);
     setSelectedProject(project);
     setShowModal(true);
@@ -795,7 +866,6 @@ export default function ProjectsPage() {
     setShowDeleteModal(true);
   };
 
-  // 🔄 Sort Handling
   const handleSort = (column) => {
     if (sortBy === column) {
       setSortDir(sortDir === "asc" ? "desc" : "asc");
@@ -806,13 +876,11 @@ export default function ProjectsPage() {
     setPage(1);
   };
 
-  // Get Sort Icon
   const getSortIcon = (column) => {
     if (sortBy !== column) return <FaSort className="ms-1 opacity-50" size={12} />;
     return sortDir === "asc" ? <FaSortUp className="ms-1" size={12} /> : <FaSortDown className="ms-1" size={12} />;
   };
 
-  // Pagination Functions
   const handlePageChange = (newPage) => {
     setPage(newPage);
   };
@@ -830,14 +898,12 @@ export default function ProjectsPage() {
     setPage(1);
   };
 
-  // Render Pagination Numbers
   const renderPaginationNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
     const startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
     const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-    // Previous dots
     if (startPage > 1) {
       pages.push(
         <button
@@ -854,7 +920,6 @@ export default function ProjectsPage() {
       }
     }
 
-    // Page numbers
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <button
@@ -868,7 +933,6 @@ export default function ProjectsPage() {
       );
     }
 
-    // Next dots
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         pages.push(<span key="dots2" className="mx-1 text-muted" style={{ fontSize: '0.8rem' }}>•••</span>);
@@ -890,9 +954,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="container-fluid py-3">
-      {/* Card Container */}
       <Card className="shadow-sm border-0">
-        {/* Card Header */}
         <Card.Header className="bg-white border-0 py-3">
           <div className="d-flex justify-content-between align-items-center">
             <div>
@@ -912,13 +974,12 @@ export default function ProjectsPage() {
         </Card.Header>
 
         <Card.Body className="p-0">
-          {/* Controls Section */}
           <div className="p-3 border-bottom bg-light">
             <div className="row g-3 align-items-center">
               <div className="col-md-6">
                 <InputGroup>
                   <Form.Control
-                    placeholder="Search projects by name or description..."
+                    placeholder="Search projects by name, head, manager..."
                     value={search}
                     onChange={(e) => {
                       setSearch(e.target.value);
@@ -950,19 +1011,19 @@ export default function ProjectsPage() {
                     Filter
                   </Dropdown.Toggle>
                   <Dropdown.Menu style={{ fontSize: '0.8rem' }}>
-                    <Dropdown.Item>Active Projects</Dropdown.Item>
-                    <Dropdown.Item>Inactive Projects</Dropdown.Item>
-                    <Dropdown.Item>Completed Projects</Dropdown.Item>
-                    <Dropdown.Item>On Hold Projects</Dropdown.Item>
+                    <Dropdown.Item onClick={() => {setSearch("planning"); setPage(1);}}>Planning</Dropdown.Item>
+                    <Dropdown.Item onClick={() => {setSearch("active"); setPage(1);}}>Active</Dropdown.Item>
+                    <Dropdown.Item onClick={() => {setSearch("onHold"); setPage(1);}}>On Hold</Dropdown.Item>
+                    <Dropdown.Item onClick={() => {setSearch("completed"); setPage(1);}}>Completed</Dropdown.Item>
+                    <Dropdown.Item onClick={() => {setSearch("cancelled"); setPage(1);}}>Cancelled</Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item>Clear Filters</Dropdown.Item>
+                    <Dropdown.Item onClick={() => {setSearch(""); setPage(1);}}>Clear Filters</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
             </div>
           </div>
 
-          {/* Table Section */}
           <div className="table-responsive">
             <Table hover className="mb-0">
               <thead className="table-light">
@@ -987,15 +1048,13 @@ export default function ProjectsPage() {
                       {getSortIcon("name")}
                     </div>
                   </th>
-                  <th 
-                    style={{ cursor: "pointer", minWidth: "200px" }} 
-                    onClick={() => handleSort("description")}
-                    className="py-2"
-                  >
-                    <div className="d-flex align-items-center justify-content-between">
-                      <span className="fw-semibold text-muted" style={{ fontSize: '0.8rem' }}>Description</span>
-                      {getSortIcon("description")}
-                    </div>
+                  <th style={{ minWidth: "150px" }} className="py-2 fw-semibold text-muted">
+                    <FaUserTie className="me-1" size={12} />
+                    Project Head
+                  </th>
+                  <th style={{ minWidth: "150px" }} className="py-2 fw-semibold text-muted">
+                    <FaUserCog className="me-1" size={12} />
+                    Project Manager
                   </th>
                   <th 
                     style={{ cursor: "pointer", minWidth: "130px" }} 
@@ -1007,13 +1066,14 @@ export default function ProjectsPage() {
                       {getSortIcon("status")}
                     </div>
                   </th>
-                  <th style={{ minWidth: "130px" }} className="py-2 fw-semibold text-center text-muted" style={{ fontSize: '0.8rem' }}>Actions</th>
+                  <th style={{ minWidth: "200px" }} className="py-2 fw-semibold text-muted text-center">Timeline</th>
+                  <th style={{ minWidth: "130px" }} className="py-2 fw-semibold text-center text-muted">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="5" className="text-center py-4">
+                    <td colSpan="7" className="text-center py-4">
                       <div className="d-flex justify-content-center align-items-center">
                         <Spinner animation="border" variant="primary" size="sm" className="me-2" />
                         <span className="text-muted" style={{ fontSize: '0.8rem' }}>Loading projects...</span>
@@ -1034,15 +1094,30 @@ export default function ProjectsPage() {
                           </div>
                           <div>
                             <div className="fw-semibold text-dark" style={{ fontSize: '0.85rem' }}>{p.name}</div>
+                            <small className="text-muted" style={{ fontSize: '0.7rem' }}>ID: {p.id}</small>
                           </div>
                         </div>
                       </td>
                       <td className="py-2">
-                        <div className="text-dark" style={{ fontSize: '0.8rem' }}>
-                          {p.description && p.description.length > 80 
-                            ? `${p.description.substring(0, 80)}...` 
-                            : p.description || 'No description'
-                          }
+                        <div className="d-flex align-items-center">
+                          <div className="bg-light rounded-circle d-flex align-items-center justify-content-center me-2"
+                               style={{ width: '28px', height: '28px' }}>
+                            <FaUserTie size={14} className="text-secondary" />
+                          </div>
+                          <span style={{ fontSize: '0.8rem' }}>
+                            {p.projecthead || '—'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-2">
+                        <div className="d-flex align-items-center">
+                          <div className="bg-light rounded-circle d-flex align-items-center justify-content-center me-2"
+                               style={{ width: '28px', height: '28px' }}>
+                            <FaUserCog size={14} className="text-secondary" />
+                          </div>
+                          <span style={{ fontSize: '0.8rem' }}>
+                            {p.projectmanager || '—'}
+                          </span>
                         </div>
                       </td>
                       <td className="py-2">
@@ -1052,8 +1127,20 @@ export default function ProjectsPage() {
                           style={{ fontWeight: '500', fontSize: '0.75rem', width: 'fit-content' }}
                         >
                           {statusIcons[p.status]}
-                          {p.status || "Active"}
+                          {formatStatus(p.status)}
                         </Badge>
+                      </td>
+                      <td className="py-2">
+                        <div className="d-flex flex-column" style={{ fontSize: '0.75rem' }}>
+                          <div className="d-flex align-items-center text-muted mb-1">
+                            <FaCalendarAlt className="me-1" size={10} />
+                            <span>Start: {formatDate(p.startDate)}</span>
+                          </div>
+                          <div className="d-flex align-items-center text-muted">
+                            <FaCalendarAlt className="me-1" size={10} />
+                            <span>End: {formatDate(p.endDate)}</span>
+                          </div>
+                        </div>
                       </td>
                       <td className="py-2">
                         <div className="d-flex justify-content-center gap-1">
@@ -1110,7 +1197,7 @@ export default function ProjectsPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center py-4">
+                    <td colSpan="7" className="text-center py-4">
                       <div className="text-muted">
                         <FaSearch size={32} className="mb-2 opacity-25" />
                         <h6 className="mb-2" style={{ fontSize: '0.9rem' }}>No projects found</h6>
@@ -1125,7 +1212,6 @@ export default function ProjectsPage() {
             </Table>
           </div>
 
-          {/* Pagination Section */}
           {projects.length > 0 && (
             <div className="p-2 border-top bg-light">
               <div className="d-flex justify-content-between align-items-center">
@@ -1171,7 +1257,7 @@ export default function ProjectsPage() {
       </Card>
 
       {/* ➕ Add/Edit Project Modal */}
-      <Modal show={showModal} onHide={handleClose} centered>
+      <Modal show={showModal} onHide={handleClose} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: '1rem' }}>
             {editId ? "Edit Project" : "Add Project"}
@@ -1182,23 +1268,94 @@ export default function ProjectsPage() {
             <Form.Group className="mb-3">
               <Form.Label style={{ fontSize: '0.85rem' }}>Project Name <span className="text-danger">*</span></Form.Label>
               <Form.Control
+                type="text"
                 placeholder="Enter project name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 style={{ fontSize: '0.85rem' }}
+                isInvalid={!!formErrors.name}
               />
+              <Form.Control.Feedback type="invalid" style={{ fontSize: '0.75rem' }}>
+                {formErrors.name}
+              </Form.Control.Feedback>
             </Form.Group>
+            
             <Form.Group className="mb-3">
               <Form.Label style={{ fontSize: '0.85rem' }}>Description</Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={2}
                 placeholder="Enter project description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 style={{ fontSize: '0.85rem' }}
               />
             </Form.Group>
+
+            <div className="row">
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>
+                    <FaUserTie className="me-1" size={12} />
+                    Project Head
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter project head name"
+                    value={formData.projecthead}
+                    onChange={(e) => setFormData({ ...formData, projecthead: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>
+                    <FaUserCog className="me-1" size={12} />
+                    Project Manager
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter project manager name"
+                    value={formData.projectmanager}
+                    onChange={(e) => setFormData({ ...formData, projectmanager: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>
+                    <FaCalendarAlt className="me-1" size={12} />
+                    Start Date
+                  </Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label style={{ fontSize: '0.85rem' }}>
+                    <FaCalendarAlt className="me-1" size={12} />
+                    End Date
+                  </Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+
             <Form.Group className="mb-3">
               <Form.Label style={{ fontSize: '0.85rem' }}>Status</Form.Label>
               <Form.Select
@@ -1206,11 +1363,17 @@ export default function ProjectsPage() {
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 style={{ fontSize: '0.85rem' }}
               >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Completed">Completed</option>
-                <option value="On Hold">On Hold</option>
+                {statusOptions.map(status => (
+                  <option key={status} value={status}>
+                    {formatStatus(status)}
+                  </option>
+                ))}
               </Form.Select>
+              {!editId && (
+                <Form.Text className="text-muted" style={{ fontSize: '0.75rem' }}>
+                  New projects are created with 'Planning' status
+                </Form.Text>
+              )}
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -1225,34 +1388,94 @@ export default function ProjectsPage() {
       </Modal>
 
       {/* 👁️ View Project Modal */}
-      <Modal show={showViewModal} onHide={() => setShowViewModal(false)} centered>
+      <Modal show={showViewModal} onHide={() => setShowViewModal(false)} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: '1rem' }}>Project Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedProject && (
-            <div className="text-center">
-              <div className={`rounded-circle d-flex align-items-center justify-content-center text-white mx-auto mb-2 ${getAvatarColor(0)}`}
-                   style={{ width: '60px', height: '60px', fontSize: '1.2rem', fontWeight: '600' }}>
-                {getInitials(selectedProject.name)}
-              </div>
-              <h5 className="mb-1" style={{ fontSize: '1rem' }}>{selectedProject.name}</h5>
-              <div className="mb-2">
-                <Badge bg={statusColors[selectedProject.status]} style={{ fontSize: '0.75rem' }}>
-                  {statusIcons[selectedProject.status]}
-                  {selectedProject.status || "Active"}
-                </Badge>
+            <div>
+              <div className="text-center mb-4">
+                <div className={`rounded-circle d-flex align-items-center justify-content-center text-white mx-auto mb-2 ${getAvatarColor(0)}`}
+                     style={{ width: '70px', height: '70px', fontSize: '1.5rem', fontWeight: '600' }}>
+                  {getInitials(selectedProject.name)}
+                </div>
+                <h5 className="mb-1" style={{ fontSize: '1.1rem' }}>{selectedProject.name}</h5>
+                <div className="mb-2">
+                  <Badge bg={statusColors[selectedProject.status]} style={{ fontSize: '0.8rem' }}>
+                    {statusIcons[selectedProject.status]}
+                    {formatStatus(selectedProject.status)}
+                  </Badge>
+                </div>
+                <p className="text-muted mb-0" style={{ fontSize: '0.8rem' }}>Project ID: {selectedProject.id}</p>
               </div>
               
-              <div className="text-start">
-                <div className="mb-2" style={{ fontSize: '0.85rem' }}>
-                  <strong>Project ID:</strong> {selectedProject.id}
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <div className="bg-light p-3 rounded">
+                    <div className="d-flex align-items-center mb-2">
+                      <FaUserTie size={16} className="text-primary me-2" />
+                      <strong style={{ fontSize: '0.85rem' }}>Project Head</strong>
+                    </div>
+                    <p className="mb-0" style={{ fontSize: '0.9rem' }}>
+                      {selectedProject.projecthead || 'Not assigned'}
+                    </p>
+                  </div>
                 </div>
-                <div className="mb-2" style={{ fontSize: '0.85rem' }}>
-                  <strong>Description:</strong> 
-                  <p className="mt-1 mb-0 text-muted" style={{ fontSize: '0.8rem' }}>
-                    {selectedProject.description || 'No description available'}
-                  </p>
+                <div className="col-md-6">
+                  <div className="bg-light p-3 rounded">
+                    <div className="d-flex align-items-center mb-2">
+                      <FaUserCog size={16} className="text-success me-2" />
+                      <strong style={{ fontSize: '0.85rem' }}>Project Manager</strong>
+                    </div>
+                    <p className="mb-0" style={{ fontSize: '0.9rem' }}>
+                      {selectedProject.projectmanager || 'Not assigned'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row mb-3">
+                <div className="col-12">
+                  <div className="bg-light p-3 rounded">
+                    <strong style={{ fontSize: '0.85rem' }}>Description</strong>
+                    <p className="mt-2 mb-0" style={{ fontSize: '0.85rem' }}>
+                      {selectedProject.description || 'No description available'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="bg-light p-3 rounded">
+                    <strong style={{ fontSize: '0.85rem' }}>Timeline</strong>
+                    <div className="mt-2">
+                      <div className="d-flex align-items-center mb-2">
+                        <FaCalendarAlt className="me-2 text-muted" size={12} />
+                        <span style={{ fontSize: '0.85rem' }}>Start: {formatDate(selectedProject.startDate)}</span>
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <FaCalendarAlt className="me-2 text-muted" size={12} />
+                        <span style={{ fontSize: '0.85rem' }}>End: {formatDate(selectedProject.endDate)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="bg-light p-3 rounded">
+                    <strong style={{ fontSize: '0.85rem' }}>Additional Info</strong>
+                    <div className="mt-2">
+                      <div className="d-flex align-items-center mb-2">
+                        <span className="text-muted me-2" style={{ fontSize: '0.8rem' }}>Created:</span>
+                        <span style={{ fontSize: '0.8rem' }}>Recently</span>
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <span className="text-muted me-2" style={{ fontSize: '0.8rem' }}>Last Updated:</span>
+                        <span style={{ fontSize: '0.8rem' }}>Recently</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1280,8 +1503,17 @@ export default function ProjectsPage() {
                 </div>
                 <h6 className="mb-1" style={{ fontSize: '0.9rem' }}>{selectedProject.name}</h6>
                 <Badge bg={statusColors[selectedProject.status]} style={{ fontSize: '0.7rem' }}>
-                  {selectedProject.status || "Active"}
+                  {statusIcons[selectedProject.status]}
+                  {formatStatus(selectedProject.status)}
                 </Badge>
+                {selectedProject.projecthead && (
+                  <div className="mt-2">
+                    <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>
+                      <FaUserTie className="me-1" size={10} />
+                      Head: {selectedProject.projecthead}
+                    </small>
+                  </div>
+                )}
               </div>
               <p className="mb-0" style={{ fontSize: '0.85rem' }}>
                 Are you sure you want to delete project <strong>"{selectedProject.name}"</strong>?
@@ -1301,4 +1533,6 @@ export default function ProjectsPage() {
       </Modal>
     </div>
   );
-}
+};
+
+export default ProjectsPage;

@@ -27,7 +27,7 @@ public class ProjectController {
     }
 
     @GetMapping("/getProjectsCount")
-    public ResponseEntity<Integer> saveEmployeeCount(){
+    public ResponseEntity<Integer> getProjectsCount(){
         int count = service.countProject();
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
@@ -55,6 +55,12 @@ public class ProjectController {
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteProject(@PathVariable long id) {
+        String msg = service.deleteProject(id);
+        return new ResponseEntity<>(msg, HttpStatus.OK);
+    }
+
     @GetMapping("/smart")
     public ResponseEntity<Map<String, Object>> getProjectsSmart(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -65,7 +71,6 @@ public class ProjectController {
     ) {
         Map<String, Object> response =
                 service.getSmartPaginatedProjects(page, size, sortBy, sortDir, search);
-
         return ResponseEntity.ok(response);
     }
 }

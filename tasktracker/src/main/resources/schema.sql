@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS = 0;  
+
 CREATE TABLE IF NOT EXISTS employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
@@ -9,14 +11,18 @@ CREATE TABLE IF NOT EXISTS projects (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
     description TEXT,
-    status VARCHAR(50) DEFAULT 'planning'  -- planning, active, onHold, completed, cancelled
+ 	projecthead VARCHAR(100),      
+    projectmanager VARCHAR(100),
+    status VARCHAR(50) DEFAULT 'planning',
+    start_date DATE,        
+    end_date DATE         
 );
 
 CREATE TABLE IF NOT EXISTS modules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
     description TEXT,
-    status VARCHAR(50),       -- planning, active, completed
+    status VARCHAR(50),
     priority VARCHAR(50),
     client_name VARCHAR(50),
     project_id INT,
@@ -61,3 +67,6 @@ CREATE TABLE IF NOT EXISTS tasks (
     FOREIGN KEY (employee_id) REFERENCES employees(id),
     FOREIGN KEY (error_id) REFERENCES errors(id)
 );
+
+
+SET FOREIGN_KEY_CHECKS = 1;  
