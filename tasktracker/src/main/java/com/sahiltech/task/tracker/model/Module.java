@@ -20,4 +20,5 @@ public class Module {
     private long projectId;            //  camelCase (project_id → projectId.
     private LocalDate startDate;       //  new field
     private LocalDate completedDate;   //  new field
+    private Long moduleLead;  // Employee ID who leads this module
 }

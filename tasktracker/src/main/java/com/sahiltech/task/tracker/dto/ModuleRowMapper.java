@@ -19,6 +19,7 @@ public class ModuleRowMapper implements RowMapper<Module> {
         module.setPriority(rs.getString("priority"));
         module.setClientName(rs.getString("client_name"));
         module.setProjectId(rs.getLong("project_id"));
+        module.setModuleLead(rs.getObject("module_lead") != null ? rs.getLong("module_lead") : null);  // Add this
         module.setStartDate(
                 rs.getDate("start_date") != null ? rs.getDate("start_date").toLocalDate() : null
         );

@@ -3,7 +3,6 @@ package com.sahiltech.task.tracker.serviceimpl;
 import com.sahiltech.task.tracker.model.Module;
 import com.sahiltech.task.tracker.repository.NewModuleRepo;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 
@@ -16,33 +15,32 @@ public class NewModuleServiceImpl {
         this.moduleRepo = moduleRepo;
     }
 
+    public Module saveModule(Module module) {
+        return moduleRepo.saveModule(module);
+    }
+
     public int countModules() {
         return moduleRepo.countAllModules();
     }
 
-    public Module saveModule(Module module) {
-        return moduleRepo.saveModule(module);
+    public List<Module> getAllModulesByProjectId(Long projectId) {
+        return moduleRepo.getModuleByProjectId(projectId);
     }
 
     public Module getModuleById(Long id) {
         return moduleRepo.getById(id);
     }
 
-    public List<Module> getAllModules() {
-        return moduleRepo.getAllModules();
-    }
-
-    // ✅ This was missing properly after merge
-    public List<Module> getAllModulesByProjectId(Long projectId) {
-        return moduleRepo.getModuleByProjectId(projectId);
-    }
-
     public String updateModule(Long id, Module module) {
         return moduleRepo.updateModule(id, module);
     }
 
-    public String deleteModule(long id) {
+    public String deleteModule(Long id) {
         return moduleRepo.deleteModule(id);
+    }
+
+    public List<Module> getAllModules() {
+        return moduleRepo.getAllModules();
     }
 
     public Map<String, Object> getSmartPaginatedModules(

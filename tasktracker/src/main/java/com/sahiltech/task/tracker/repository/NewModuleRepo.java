@@ -21,18 +21,18 @@ public class NewModuleRepo {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // ✅ SQL Queries
-
+    // ✅ SQL Queries WITH module_lead
     private final String sqlCreate = """
-        INSERT INTO modules(name, description, status, priority, client_name, project_id, start_date, completed_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO modules(name, description, status, priority, client_name, project_id, module_lead, start_date, completed_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """;
 
     private final String sqlGetById = "SELECT * FROM modules WHERE id = ?";
     private final String sqlDeleteById = "DELETE FROM modules WHERE id = ?";
+    
     private final String sqlUpdateById = """
         UPDATE modules 
-        SET name=?, description=?, status=?, priority=?, client_name=?, project_id=?, start_date=?, completed_date=? 
+        SET name=?, description=?, status=?, priority=?, client_name=?, project_id=?, module_lead=?, start_date=?, completed_date=? 
         WHERE id=?
     """;
 
@@ -40,14 +40,12 @@ public class NewModuleRepo {
     private final String sqlGetAllCount = "SELECT COUNT(*) FROM modules";
     private static final String SQL_GET_BY_PROJECTID = "SELECT * FROM modules WHERE project_id=?";
 
-
     // ✅ GET BY PROJECT ID
     public List<Module> getModuleByProjectId(Long projectId) {
         return jdbcTemplate.query(SQL_GET_BY_PROJECTID, new ModuleRowMapper(), projectId);
     }
 
-
-    // ✅ CREATE
+    // ✅ CREATE with module_lead
     public Module saveModule(Module module) {
         if (module == null) return null;
 
@@ -61,8 +59,9 @@ public class NewModuleRepo {
             ps.setString(4, module.getPriority());
             ps.setString(5, module.getClientName());
             ps.setObject(6, module.getProjectId());
-            ps.setObject(7, module.getStartDate());
-            ps.setObject(8, module.getCompletedDate());
+            ps.setObject(7, module.getModuleLead());  // ✅ module_lead added
+            ps.setObject(8, module.getStartDate());
+            ps.setObject(9, module.getCompletedDate());
             return ps;
         }, keyHolder);
 
@@ -73,7 +72,6 @@ public class NewModuleRepo {
         return module;
     }
 
-
     // ✅ READ BY ID
     public Module getById(Long id) {
         if (id == null) return null;
@@ -83,7 +81,6 @@ public class NewModuleRepo {
             return null;
         }
     }
-
 
     // ✅ DELETE
     public String deleteModule(Long id) {
@@ -96,8 +93,7 @@ public class NewModuleRepo {
                 : "No module found with id " + id;
     }
 
-
-    // ✅ UPDATE
+    // ✅ UPDATE with module_lead
     public String updateModule(Long id, Module module) {
         if (id == null || module == null) return "Invalid data";
 
@@ -108,6 +104,7 @@ public class NewModuleRepo {
                 module.getPriority(),
                 module.getClientName(),
                 module.getProjectId(),
+                module.getModuleLead(),  // ✅ module_lead added
                 module.getStartDate(),
                 module.getCompletedDate(),
                 id
@@ -118,19 +115,16 @@ public class NewModuleRepo {
                 : "No module found with id " + id;
     }
 
-
     // ✅ GET ALL
     public List<Module> getAllModules() {
         return jdbcTemplate.query(sqlGetAll, new ModuleRowMapper());
     }
-
 
     // ✅ COUNT
     public int countAllModules() {
         Integer count = jdbcTemplate.queryForObject(sqlGetAllCount, Integer.class);
         return count != null ? count : 0;
     }
-
 
     // ✅ SMART PAGINATION
     public Map<String, Object> getModulesSmartPagination(
